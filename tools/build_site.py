@@ -107,8 +107,15 @@ code{background:#eef2f8;padding:1px 5px;border-radius:6px;font-size:.92em}
 .burger{display:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;place-items:center}
 
 /* ---------- герой ---------- */
-.hero{position:relative;overflow:hidden;background:var(--ink);color:#fff;isolation:isolate}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center 60%;opacity:.28;filter:saturate(.85);z-index:-2}
+.hero{position:relative;overflow:hidden;background:var(--ink);color:#fff;isolation:isolate;transition:background .6s ease}
+:root{--city-accent:#1766e0;--city-soft:#eef3fb}
+.hero-bg{position:absolute;inset:0;overflow:hidden;z-index:-2;background:var(--ink)}
+.hero-photo{position:absolute;inset:-4%;background-size:cover;background-position:center 58%;opacity:0;filter:saturate(.92);
+  transition:opacity 1.1s ease}
+.hero-photo.on{opacity:.30;animation:kenburns 30s ease-out both}
+@keyframes kenburns{from{transform:scale(1.03)}to{transform:scale(1.11) translate3d(0,-1.4%,0)}}
+.hero-veil{position:absolute;inset:0;background:linear-gradient(115deg,rgba(11,23,41,.94) 0%,rgba(11,23,41,.72) 46%,rgba(11,23,41,.5) 100%)}
+.hero-veil::after{content:"";position:absolute;inset:0;background:var(--city-accent);opacity:.16;mix-blend-mode:screen;transition:background .7s ease}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(115deg,rgba(7,17,35,.97) 30%,rgba(9,22,45,.72) 60%,rgba(11,25,48,.95))}
 .hero-inner{max-width:var(--maxw);margin:0 auto;padding:38px 22px 46px;display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:34px;align-items:start}
 .hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.26);background:rgba(255,255,255,.08);font-size:12.5px;font-weight:700;color:#e7efff}
@@ -132,6 +139,65 @@ code{background:#eef2f8;padding:1px 5px;border-radius:6px;font-size:.92em}
 .finder-head h2{margin:0;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
 .finder-head p{margin:0;font-size:12.8px;color:var(--text-muted)}
 .fields{display:grid;grid-template-columns:1.02fr 1fr 1fr 224px;gap:14px;align-items:stretch}
+/* --- шаги подбора: вертикальный сценарий, город задаёт настроение --- */
+.steps-flow{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.step-duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.step{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 15px;background:#fbfcfe;display:flex;flex-direction:column;gap:10px;min-width:0}
+.step-city{background:#fff}
+.city-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.city-card{position:relative;overflow:hidden;display:grid;gap:2px;text-align:left;border:1px solid var(--line);border-radius:16px;
+  background:#fff;padding:12px 14px;cursor:pointer;min-height:126px;color:var(--text);font-family:inherit;
+  transition:transform .38s cubic-bezier(.2,.7,.2,1),box-shadow .38s,border-color .38s}
+.city-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px -16px rgba(11,23,41,.38)}
+.city-card:focus-visible{outline:2px solid var(--city-accent);outline-offset:2px}
+.city-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.14;filter:saturate(1.05);
+  transition:opacity .5s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.city-name,.city-mood,.city-meta{position:relative}
+.city-name{font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+.city-mood{font-size:12.2px;line-height:1.4;color:var(--text-secondary)}
+.city-meta{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:8px}
+.city-meta i{font-style:normal;font-size:11.4px;font-weight:700;border-radius:999px;padding:4px 9px;
+  background:var(--line-2);color:var(--text-secondary);transition:background .4s,color .4s}
+.city-card[aria-selected="true"]{border-color:var(--cc);box-shadow:inset 0 0 0 1px var(--cc),0 14px 30px -20px rgba(11,23,41,.45)}
+.city-card[aria-selected="true"] .city-photo{opacity:.36;transform:scale(1.07)}
+.city-card[aria-selected="true"] .city-meta i{background:var(--cc-soft);color:var(--cc)}
+/* карточка настроения города */
+.mood{margin:2px 0 0;border-left:3px solid var(--city-accent);background:var(--city-soft);border-radius:0 14px 14px 0;padding:12px 14px 13px}
+.mood.in{animation:moodIn .6s cubic-bezier(.2,.7,.2,1) both}
+@keyframes moodIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.mood-lead{margin:0;font-size:13.4px;line-height:1.52;color:var(--text)}
+.mood-hint{margin:7px 0 0;font-size:12.6px;line-height:1.45;color:var(--text-secondary)}
+.mood-facts{display:flex;flex-wrap:wrap;gap:8px;margin-top:11px}
+.fact{display:grid;gap:2px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:7px 11px;min-width:140px}
+.fact i{font-style:normal;font-size:10.4px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted)}
+.fact b{font-size:13px;font-variant-numeric:tabular-nums}
+.mood-deals{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:11px}
+.mood-deals>b{font-size:12.4px;color:var(--text-secondary)}
+.chip.deal{background:var(--city-accent);border-color:transparent;color:#fff;font-weight:700}
+.chip.deal:hover{filter:brightness(1.07)}
+/* поля ввода вместо ползунков */
+.amount.big{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.amount.big input{flex:1 1 110px;min-width:90px;border:0;border-bottom:2px solid var(--line);background:none;padding:2px 0;
+  font-size:34px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;color:var(--text);
+  transition:border-color .3s}
+.amount.big input:focus{outline:none;border-bottom-color:var(--city-accent)}
+.amount.big .unit{font-size:13px;font-weight:700;color:var(--text-muted)}
+.nudge{width:36px;height:36px;flex:none;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--text-secondary);
+  font-size:19px;line-height:1;cursor:pointer;transition:border-color .25s,color .25s,transform .25s}
+.nudge:hover{border-color:var(--city-accent);color:var(--city-accent);transform:translateY(-1px)}
+.presets .chip{min-width:78px;justify-content:center;text-align:center}
+.presets .chip[aria-pressed="true"]{background:var(--city-accent);border-color:transparent;color:#fff;font-weight:700}
+/* полоса результата под полями */
+.cta-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:13px 16px;border-radius:16px;
+  background:linear-gradient(100deg,var(--ink),var(--ink-2));color:#fff}
+.cta-bar .cta-count{line-height:1.25}
+.cta-bar .big{font-size:16px;font-weight:800}
+.cta-bar .small{font-size:12px;color:#b9c6dd}
+.cta-bar .btn-go{margin-left:auto}
+/* анимация переключения города */
+.finder.city-switch .step{animation:stepIn .5s cubic-bezier(.2,.7,.2,1) both}
+.finder.city-switch .step-duo .step:nth-child(2){animation-delay:.07s}
+@keyframes stepIn{from{opacity:.35;transform:translateY(6px) scale(.995)}to{opacity:1;transform:none}}
 .field{border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px 14px;background:#fbfcfe;display:flex;flex-direction:column;gap:10px;min-height:196px}
 .field-top{display:flex;align-items:center;justify-content:space-between;gap:6px;white-space:nowrap}
 .step-tag{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);display:inline-flex;align-items:center}
@@ -163,6 +229,9 @@ input[type=range]{width:100%;accent-color:var(--brand-blue);height:28px;margin:0
 .classbar{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:12px}
 .classbar>b{font-size:12.5px;color:var(--text-muted)}
 .classbar .grow{margin-left:auto}
+.v-pill.lift{cursor:pointer;font-family:inherit;text-align:left;border:1px dashed var(--city-accent);
+  background:var(--city-soft);transition:background .25s,transform .25s}
+.v-pill.lift:hover{transform:translateY(-1px);background:#fff}
 .compare-out{margin-top:10px;width:100%;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12.4px;white-space:pre-wrap;background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
 .scenes{margin-top:12px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .scenes>b{font-size:12.5px;color:var(--text-muted)}
@@ -302,6 +371,17 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
 @media (max-width:1180px){
   .nav{display:none}.burger{display:grid}
   .fields{grid-template-columns:1fr 1fr}
+  .city-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .city-card{min-height:44px;padding:9px 7px;border-radius:13px}
+  .step-city{padding:11px 10px 12px}
+  .city-name{font-size:12.2px;letter-spacing:-.25px;line-height:1.2}
+  .city-mood,.city-meta{display:none}
+  .city-photo{opacity:.1}
+  .step-duo{grid-template-columns:minmax(0,1fr)}
+  .field-top{white-space:normal}
+  .amount.big input{font-size:29px}
+  .cta-bar .btn-go{margin-left:0;width:100%;justify-content:center}
+  .cta-bar .btn-ghost-light{flex:1 1 44%}
   .field-cta{grid-column:span 2;min-height:0;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;text-align:left}
   .field-cta>div{flex:1 1 200px}
   .btn-go,.btn-ghost-light{width:auto;flex:1 1 180px}
@@ -311,6 +391,10 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
 @media (max-width:720px){
   body{font-size:14.5px}
   .fields{grid-template-columns:1fr}.field-cta{grid-column:auto}.field{min-height:0}
+  .mood{padding:10px 11px}
+  .mood-lead{font-size:12.8px;line-height:1.45}
+  .note-soft{display:none}
+  .presets .chip{font-size:12.4px}.fact{min-width:calc(50% - 4px)}.presets .chip{flex:1 1 calc(33.3% - 6px);min-width:0}
   .hero h1{font-size:26px}
   .topbar-inner{padding:0 12px;gap:8px}.stamp{display:none}
   .brand-name,.brand-tag{display:none}.brand{gap:0}
@@ -335,6 +419,7 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
   td.num{white-space:normal}
   tr[data-fits] td:first-child{box-shadow:none}
 }
+@media (prefers-reduced-motion:reduce){.mood.in,.finder.city-switch .step,.hero-photo.on{animation:none}.city-card,.city-photo,.hero-photo,.nudge{transition:none}}
 @media print{.topbar,.finder-wrap,.hero-bg,.lead,.burger{display:none}.card,.verdict,.block .inner{box-shadow:none}}
 """
 
@@ -356,10 +441,10 @@ BODY = r"""
       </div>
       <nav class="nav" id="main-nav" aria-label="Разделы">
         <a href="#finder">Подобрать квартиру</a>
-        <a href="#results">Ваши 3 ЖК</a>
+        <a href="#results">Ваши ЖК</a>
         <a href="#sheet">Сравнение городов</a>
         <a href="#chart">График цен</a>
-        <a href="#catalog">Все 15 ЖК</a>
+        <a href="#catalog">Все ЖК</a>
       </nav>
       <div class="topbar-right">
         <span class="stamp"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-check"/></svg> Цены сверены с источниками 15-16.11.2026</span>
@@ -369,13 +454,17 @@ BODY = r"""
   </header>
 
   <section class="hero">
-    <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
+    <div class="hero-bg" aria-hidden="true">
+      <div class="hero-photo on" id="heroPhotoA"></div>
+      <div class="hero-photo" id="heroPhotoB"></div>
+      <div class="hero-veil"></div>
+    </div>
     <div class="hero-inner">
       <div>
         <span class="hero-eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Бесплатно · без регистрации · 15 ЖК в срезе</span>
         <h1>Какие новостройки вам по бюджету — и что в них реально можно купить за эти деньги</h1>
         <p class="hero-sub">Не нужно открывать десятки вкладок и умножать «цену от» на метраж. Укажите город, бюджет и площадь — сервис
-          подберёт <b>3 ЖК по реальным лотам</b>: цена входа, остаток бюджета, ипотечный платёж и объяснение, почему вариант лучше.
+          подберёт <b>подходящие ЖК по реальным лотам</b>: цена входа, остаток бюджета, ипотечный платёж и объяснение, почему вариант лучше.
           Если квартир такой площади в комплексе нет — <b>скажем прямо</b>, а не нарисуем «вам хватает».</p>
         <div class="hero-fine">
           <span><svg class="ic ic--in" aria-hidden="true"><use href="#i-check"/></svg> 15 из 15 цен сверены вручную: realty.vbr.ru (14) и m2.ru (1), 15-16.11.2026</span>
@@ -387,7 +476,7 @@ BODY = r"""
         <p class="steps-title">Как это работает — 3 шага</p>
         <div class="step-row"><span class="step-num" aria-hidden="true">1</span><p>Выберите <b>город</b>: Сочи, Москва или Екатеринбург</p></div>
         <div class="step-row"><span class="step-num" aria-hidden="true">2</span><p>Укажите <b>бюджет</b> и <b>площадь</b> — или напишите словами: «студия у моря до 20 млн»</p></div>
-        <div class="step-row"><span class="step-num" aria-hidden="true">3</span><p>Сравните <b>3 варианта</b> с фото домов и откройте карточку застройщика по ссылке</p></div>
+        <div class="step-row"><span class="step-num" aria-hidden="true">3</span><p>Сравните <b>до 3 вариантов</b> с фото домов: цена входа, остаток бюджета, ипотека и ссылка на карточку застройщика</p></div>
       </aside>
     </div>
   </section>
@@ -395,48 +484,63 @@ BODY = r"""
   <div class="finder-wrap">
     <section class="finder" id="finder" aria-labelledby="finderTitle">
       <div class="finder-head">
-        <h2 id="finderTitle"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg> Параметры вашей будущей квартиры</h2>
-        <p>Двигайте ползунки или вводите цифры — результат под панелью обновляется мгновенно</p>
+        <h2 id="finderTitle"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg> Скажите, на что вы рассчитываете</h2>
+        <p>Три шага: куда смотрим → сколько готовы потратить → какой метраж. Сумму можно вписать точной,
+          а можно взять готовой кнопкой — подбор под панелью пересчитается сразу.</p>
       </div>
 
-      <div class="fields">
-        <div class="field">
-          <div class="field-top"><span class="step-tag"><i aria-hidden="true">1</i>Город</span><span class="field-hint" id="cityCountHint"></span></div>
-          <div class="seg" role="tablist" aria-label="Город" id="cityTabs"></div>
-          <span class="field-note" id="cityPriceNote"></span>
-        </div>
-
-        <div class="field">
-          <div class="field-top"><span class="step-tag"><i aria-hidden="true">2</i>Бюджет на покупку</span><span class="field-hint" id="budgetPctHint"></span></div>
-          <div class="amount"><input type="number" id="budgetInput" inputmode="decimal" min="5" max="400" step="0.5" value="25" aria-label="Бюджет, миллионов рублей" /><span aria-hidden="true">млн ₽</span></div>
-          <input type="range" id="budgetRange" min="5" max="400" step="0.5" value="25" aria-label="Ползунок бюджета, миллионов рублей" />
-          <div class="chips" role="group" aria-label="Быстрый выбор бюджета">
-            <button class="chip" type="button" data-budget="10" aria-pressed="false">10 млн</button>
-            <button class="chip" type="button" data-budget="25" aria-pressed="true">25 млн</button>
-            <button class="chip" type="button" data-budget="40" aria-pressed="false">40 млн</button>
-            <button class="chip" type="button" data-budget="80" aria-pressed="false">80 млн</button>
-            <button class="chip" type="button" data-budget="150" aria-pressed="false">150 млн</button>
+      <div class="steps-flow">
+        <section class="step step-city">
+          <div class="field-top">
+            <span class="step-tag"><i aria-hidden="true">1</i>Куда смотрим</span>
+            <span class="field-hint" id="cityCountHint"></span>
           </div>
-        </div>
-
-        <div class="field">
-          <div class="field-top"><span class="step-tag"><i aria-hidden="true">3</i>Желаемая площадь</span><span class="field-hint" id="maxPpmHint"></span></div>
-          <div class="amount"><input type="number" id="areaInput" inputmode="numeric" min="18" max="250" step="1" value="45" aria-label="Площадь, квадратных метров" /><span aria-hidden="true">м²</span></div>
-          <input type="range" id="areaRange" min="18" max="250" step="1" value="45" aria-label="Ползунок площади, квадратных метров" />
-          <div class="chips" role="group" aria-label="Типовая квартира">
-            <button class="chip" type="button" data-area="28" aria-pressed="false">студия ~28 м²</button>
-            <button class="chip" type="button" data-area="45" aria-pressed="true">1-комн ~45 м²</button>
-            <button class="chip" type="button" data-area="65" aria-pressed="false">2-комн ~65 м²</button>
-            <button class="chip" type="button" data-area="95" aria-pressed="false">3-комн ~95 м²</button>
+          <div class="city-cards" role="tablist" aria-label="Город" id="cityTabs"></div>
+          <p class="field-note" id="cityPriceNote"></p>
+          <div class="mood" id="cityMood">
+            <p class="mood-lead" id="moodLead"></p>
+            <p class="mood-hint" id="moodHint"></p>
+            <div class="mood-facts" id="moodFacts"></div>
+            <div class="mood-deals" id="moodDeals"></div>
           </div>
-        </div>
+        </section>
 
-        <div class="field field-cta">
-          <div><span class="big" id="ctaCount">Подобрано 3 ЖК</span><br /><span class="small" id="ctaNote">цена входа, остаток, ипотека</span></div>
-          <button class="btn-go" type="button" id="goBtn">Показать варианты <svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-chev"/></svg></button>
-          <button class="btn-ghost-light" type="button" id="shareBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-link"/></svg> <span id="shareLabel">Скопировать ссылку</span></button>
-          <button class="btn-ghost-light" type="button" id="printBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-scale"/></svg> На печать / в PDF</button>
+        <div class="step-duo">
+          <section class="step">
+            <div class="field-top">
+              <span class="step-tag"><i aria-hidden="true">2</i>Бюджет на покупку</span>
+              <span class="field-hint" id="budgetPctHint"></span>
+            </div>
+            <div class="amount big">
+              <button class="nudge" type="button" id="budgetLess" aria-label="Уменьшить бюджет на 5 млн">−</button>
+              <input type="text" id="budgetInput" class="typed" inputmode="decimal" value="25" autocomplete="off" spellcheck="false" aria-label="Бюджет, миллионов рублей" />
+              <span class="unit" aria-hidden="true">млн ₽</span>
+              <button class="nudge" type="button" id="budgetMore" aria-label="Увеличить бюджет на 5 млн">+</button>
+            </div>
+            <div class="chips presets" role="group" aria-label="Быстрый выбор бюджета" id="budgetPresets"></div>
+            <p class="field-note" id="budgetTypeHint"></p>
+          </section>
+
+          <section class="step">
+            <div class="field-top">
+              <span class="step-tag"><i aria-hidden="true">3</i>Какой метраж ищем</span>
+              <span class="field-hint" id="maxPpmHint"></span>
+            </div>
+            <div class="amount big">
+              <input type="text" id="areaInput" class="typed" inputmode="numeric" value="45" autocomplete="off" spellcheck="false" aria-label="Площадь, квадратных метров" />
+              <span class="unit" aria-hidden="true">м²</span>
+            </div>
+            <div class="chips presets" role="group" aria-label="Типовая квартира" id="areaPresets"></div>
+            <p class="field-note note-soft">Площадь — желаемая: если в комплексе нет лота такого метража, сервис так и напишет, а не нарисуует «хватает».</p>
+          </section>
         </div>
+      </div>
+
+      <div class="cta-bar">
+        <span class="cta-count"><span class="big" id="ctaCount">Подобрано 3 ЖК</span><br /><span class="small" id="ctaNote">цена входа, остаток, ипотека</span></span>
+        <button class="btn-go" type="button" id="goBtn">Показать варианты <svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-chev"/></svg></button>
+        <button class="btn-ghost-light" type="button" id="shareBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-link"/></svg> <span id="shareLabel">Скопировать ссылку</span></button>
+        <button class="btn-ghost-light" type="button" id="printBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-scale"/></svg> На печать / в PDF</button>
       </div>
 
       <div class="nl">

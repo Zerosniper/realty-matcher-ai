@@ -4,6 +4,13 @@ import pathlib, os
 BASE = os.environ.get("BASE_URL", "http://127.0.0.1:8000") + "/index.html"  # запуск: python3 -m http.server 8000
 OUT = str(pathlib.Path(__file__).resolve().parent.parent / "screenshots") + "/"
 
+def shot_finder(pg, path):
+    """Снимает панель подбора целиком: липкую шапку убираем, чтобы она не легла поверх кадра."""
+    pg.evaluate("""() => { const bar = document.querySelector('.topbar'); if (bar) bar.style.display = 'none'; }""")
+    pg.wait_for_timeout(200)
+    pg.locator("#finder").screenshot(path=path)
+
+
 with sync_playwright() as p:
     browser = p.chromium.launch()
     page = browser.new_page(viewport={"width": 1420, "height": 1120}, device_scale_factor=1.5)
@@ -38,6 +45,25 @@ with sync_playwright() as p:
     page.wait_for_timeout(200)
     page.screenshot(path=OUT + "04_premium_tceo_empty_state.png")
     print("04 ok")
+
+    # 7. Шаг 1 «куда смотрим»: плитки городов + настроение города (акцент перекрашивается под Москву)
+    page.goto(BASE, wait_until="networkidle")
+    page.wait_for_timeout(450)
+    page.click('button[data-scene]:has-text("Москва · 30 млн")')
+    page.wait_for_timeout(400)
+    page.click('.city-card[data-city="Сочи"]')          # показываем смену города и перекраску акцента
+    page.wait_for_timeout(450)
+    page.click('.city-card[data-city="Москва"]')
+    page.wait_for_timeout(900)
+    shot_finder(page, OUT + "07_finder_city_step.png")
+    print("07 ok")
+
+    # 8. Мобильная панель подбора: плитки городов, поля сумм и готовые диапазоны
+    mm = browser.new_page(viewport={"width": 390, "height": 1200}, device_scale_factor=2)
+    mm.goto(BASE, wait_until="networkidle")
+    mm.wait_for_timeout(600)
+    shot_finder(mm, OUT + "08_mobile_finder.png")
+    print("08 ok")
 
     # 5. Мобильная версия
     m = browser.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=2)
