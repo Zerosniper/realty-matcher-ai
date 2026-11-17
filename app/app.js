@@ -13,7 +13,6 @@
 
   var DATA = window.ZHK_DATA || [];
   var C = window.ZHK_CALC;
-  var PHOTOS = window.ZHK_PHOTOS || null; // заполнен только в index-standalone.html
   var $ = function (id) { return document.getElementById(id); };
   var CITY_PREP = { "Сочи": "в Сочи", "Москва": "в Москве", "Екатеринбург": "в Екатеринбурге" };
   var CLASS_FILTERS = ["Все", "Бизнес", "Премиум"];
@@ -21,27 +20,33 @@
      Числа рядом сервис берёт из данных, а не из этого словаря. */
   var CITY_MOOD = {
     "Сочи": {
-      slug: "sochi", accent: "#0d7d6b", soft: "#e6f4f0",
+      slug: "sochi", accent: "#0d7d6b", soft: "#e6f4f0", lit: "#4ad6ae",
       mood: "море, горы и субтропическая зелень",
       lead: "Сочи — это курорт в узкой полосе между морем и горами: кварталы здесь читаются по виду: море, парк, панорама, а не по этажности. Дворы чаще закрытые, часть объектов — уже сданные.",
       hint: "Смотрите Хостинский и Уч-Дере — там тише и зеленее; Курортный Городок — если хочется дойти до пляжа пешком."
     },
     "Москва": {
-      slug: "msk", accent: "#1a4fd6", soft: "#e8eefc",
+      slug: "msk", accent: "#1a4fd6", soft: "#e8eefc", lit: "#8fb0ff",
       mood: "деловой центр, набережные и крупные квартальные операторы",
       lead: "Москва в этом срезе — про плотную городскую ткань: крупные девелоперы, дворы без машин, рядом парки и вода. Метр здесь дороже, чем в двух других городах среза, и это единственный город, где премиум уходит за 2 млн ₽/м².",
       hint: "Печатники и Хорошёво-Мнёвники — кварталы у воды; ЦАО — если важен адрес, а не метраж: там вход от 161 млн."
     },
     "Екатеринбург": {
-      slug: "ekb", accent: "#9a5a12", soft: "#f8efe4",
+      slug: "ekb", accent: "#9a5a12", soft: "#f8efe4", lit: "#e8b268",
       mood: "суровый климат, красивые зимы и набережные Исети",
       lead: "Екатеринбург — город крепких квартальных структур: набережные, парки, виды на воду и самый доступный метр в нашем срезе. Здесь реально взять 60 м² за 16 млн и получить готовый дом.",
       hint: "Чкаловский (м. Чкаловская) и ВИЗ — набережная и транспорт; Октябрьский — выход в ЦПКиО прямо из двора."
     }
   };
-  function theme(c) { return CITY_MOOD[c] || { slug: "", accent: "#1766e0", soft: "#eef3fb", mood: "", lead: "", hint: "" }; }
+  function theme(c) { return CITY_MOOD[c] || { slug: "", accent: "#1766e0", soft: "#eef3fb", lit: "#7fa8ff", mood: "", lead: "", hint: "" }; }
+  /* lit — светлый вариант акцента: на тёмном фоне аналитической графики --city-accent нечитаем. */
 
-  var state = { city: "Сочи", budget: 25, area: 45, klass: "Все", query: "" };
+  /* state — то, что пользователь набирает в панели (черновик).
+     V     — то, что подтверждено кнопкой «Подобрать новостройку»: по ней нарисованы
+             вердикт, карточки и список. Пока кнопки не было, V = null и результаты скрыты:
+             ввод параметров никуда не ведёт и ничего не перематывает. */
+  var state = { city: "Сочи", budget: 25, budgetRub: 25000000, area: 45, klass: "Все", query: "", district: "", intents: [] };
+  var V = null;
   var cardCache = new Map();
   var saved = [];      // «В подборку» — сравнение + заявка
   var last = null;     // последний результат match()
@@ -59,17 +64,28 @@
   function dec(v) { return String(Math.round(v * 100) / 100).replace(".", ","); }
   function icon(name) { return '<svg class="ic" aria-hidden="true"><use href="#i-' + name + '"/></svg>'; }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-  function photoFor(key) { return PHOTOS ? PHOTOS[key] : "images/" + key + ".jpg"; }
   function cityList(c) { return DATA.filter(function (z) { return z.city === c; }); }
   function cities() { var s = []; DATA.forEach(function (z) { if (s.indexOf(z.city) < 0) s.push(z.city); }); return s; }
   function capBudget() {
-    var q = C.parseQuery(state.query);
-    return q.budgetMax ? Math.min(state.budget, q.budgetMax) : state.budget;
+    var v = V || state;
+    var q = C.parseQuery(v.query);
+    return q.budgetMax ? Math.min(v.budget, q.budgetMax) : v.budget;
   }
 
-  function params() {
-    return { city: state.city, budgetMln: state.budget, areaM2: state.area, klass: state.klass, query: C.parseQuery(state.query) };
+  /* Параметры для calc.js из набора p (черновика или применённого).
+     Галочки расширенных настроек попадают в тот же q.intents, что и слова запроса, —
+     поэтому чип «у метро» и напечатанное «у метро» дают ровно один и тот же фильтр. */
+  function params(p) {
+    var q = C.parseQuery(p.query || "");
+    (p.intents || []).forEach(function (k) { if (q.intents.indexOf(k) < 0) q.intents.push(k); });
+    return { city: p.city, budgetMln: p.budget, areaM2: p.area, klass: p.klass, district: p.district || "", query: q };
   }
+
+  /* поле бюджета живёт в рублях, модель — в миллионах */
+  function parseRub(v) { var d = String(v == null ? "" : v).replace(/[^0-9]/g, ""); return d ? parseInt(d, 10) : 0; }
+  function snapRub(v) { return Math.round(clamp(v, 1000000, 400000000) / 100000) * 100000; }
+  function rubToMln(v) { return Math.round(clamp(v, 1000000, 400000000) / 10000) / 100; }
+  function rubTxt(v) { return num(v); }
 
   /* ------------------------------------------------------------------ шапка: город */
   function buildCityUI() {
@@ -85,17 +101,17 @@
       b.tabIndex = c === state.city ? 0 : -1;
       b.style.setProperty("--cc", t.accent); b.style.setProperty("--cc-soft", t.soft);
       b.innerHTML =
-        '<img class="city-photo" alt="" aria-hidden="true" src="' + esc(photoFor(list[0] ? list[0].imgKey : "")) + '" />' +
+        '<span class="city-art" aria-hidden="true">' + artCity(c) + '</span>' +
         '<span class="city-name">' + esc(c) + "</span>" +
         '<span class="city-mood">' + esc(t.mood) + "</span>" +
         '<span class="city-meta"><i>' + list.length + " ЖК</i><i>вход от " + dec(entry) + " млн</i></span>";
-      b.addEventListener("click", function () { setCity(c, true); });
+      b.addEventListener("click", function () { setCity(c); });
       tabs.appendChild(b);
 
       var m = document.createElement("button");
       m.type = "button"; m.setAttribute("role", "menuitem"); m.dataset.city = c;
       m.innerHTML = "<span>" + esc(c) + "</span><small>" + list.length + " ЖК · вход от " + dec(entry) + " млн</small>";
-      m.addEventListener("click", function () { setCity(c, true); cityMenu(false); });
+      m.addEventListener("click", function () { setCity(c); cityMenu(false); });
       menu.appendChild(m);
     });
     syncCityUI();
@@ -106,6 +122,13 @@
       e.preventDefault();
       var j = (i + (e.key === "ArrowRight" ? 1 : list.length - 1)) % list.length;
       list[j].focus(); list[j].click();
+    });
+  }
+
+  /* Кнопки класса: состояние «нажата» берётся из state.klass — один источник правды. */
+  function markKlass() {
+    [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) {
+      x.setAttribute("aria-pressed", String(x.dataset.klass === state.klass));
     });
   }
 
@@ -121,14 +144,20 @@
   }
 
   var moodCity = null;
-  function setCity(c, scroll) {
+  /* Клик по городу = только выбор: подсветка, тема, сводка, районы. Никакой прокрутки —
+     список вариантов появится по кнопке «Подобрать новостройку». */
+  function setCity(c) {
     var changed = c !== state.city;
     state.city = c;
+    state.district = "";                 // районы другого города не имеют смысла
     syncCityUI();
-    if (changed) $("finder").classList.add("city-switch");
-    render();
-    if (changed) setTimeout(function () { $("finder").classList.remove("city-switch"); }, 620);
-    if (scroll) $("results").scrollIntoView({ block: "nearest" });
+    renderDistrictChips();
+    renderIntentToggles();
+    if (changed) {
+      $("finder").classList.add("city-switch");
+      setTimeout(function () { $("finder").classList.remove("city-switch"); }, 620);
+    }
+    preview();
   }
 
   /* Настроение города: 3 факта из данных + до 3 «выгодных» сценария. */
@@ -173,13 +202,7 @@
         }).join("") + '<span class="field-note" style="margin:0">бюджет в сценарии = вход + 35% запаса</span>'
       : "";
     host._deals = f.deals;
-    // плавная смена фона шапки: два слоя, перекрёстное растворение
-    var bg = cityList(c)[0], A = $("heroPhotoA"), B = $("heroPhotoB");
-    if (bg && A && B) {
-      var front = A.classList.contains("on") ? A : B, back = front === A ? B : A;
-      back.style.backgroundImage = "url('" + photoFor(bg.imgKey) + "')";
-      requestAnimationFrame(function () { back.classList.add("on"); front.classList.remove("on"); });
-    }
+    renderHeroArt();
     if (moodCity !== c) {
       moodCity = c;
       host.classList.remove("in");
@@ -197,8 +220,7 @@
     var min = Math.min.apply(null, list.map(function (z) { return z.minLotMln; }));
     var fit = list.filter(function (z) { return z.minLotMln <= state.budget; }).length;
     el.textContent = state.budget < min
-      ? "В " + (CITY_PREP[state.city] || state.city) + " самый дешёвый вход — " + mln(min) +
-        ". Ниже покажу, на сколько не хватает и что было бы достаточно."
+      ? "В " + (CITY_PREP[state.city] || state.city) + " самый дешёвый вход — " + rubTxt(min * 1000000) + " ₽.Ниже напишу, на сколько не хватает."
       : "На вход этого хватает уже в " + fit + " из " + list.length + " ЖК — дальше решает площадь и срок сдачи.";
   }
 
@@ -222,7 +244,7 @@
   function cardMarkup() {
     return '' +
       '<div class="card-media">' +
-        '<img class="card-photo" alt="" loading="lazy" />' +
+        '<div class="card-art" data-r="art" role="img"></div>' +
         '<div class="card-ribbon"><span class="badge" data-r="cls"></span><span class="badge" data-r="state"></span></div>' +
         '<div class="card-loc">' + icon("pin") + '<span data-r="loc"></span></div>' +
       "</div>" +
@@ -263,7 +285,6 @@
     el.innerHTML = cardMarkup();
     var refs = { root: el };
     [].forEach.call(el.querySelectorAll("[data-r]"), function (n) { refs[n.dataset.r] = n; });
-    refs.photo = el.querySelector(".card-photo");
     return refs;
   }
 
@@ -275,12 +296,13 @@
       (z.zhkClass === "Премиум" ? " card--premium" : "") +
       (r.status === "fits" || r.status === "tight" ? "" : " card--excluded");
 
-    if (k.photo.dataset.key !== z.imgKey) {
-      k.photo.dataset.key = z.imgKey;
-      k.photo.onerror = function () { k.root.classList.add("no-photo"); };
-      k.photo.onload = function () { k.root.classList.remove("no-photo"); };
-      k.photo.src = photoFor(z.imgKey);
-      k.photo.alt = z.name + " — фото жилого комплекса (" + z.sourceName + ")";
+    /* Вместо фотографии дома — рисованная аналитика: цены по типам лотов и календарь
+       срока сдачи. Обе части собраны из полей источника, ни одна цифра не придумана. */
+    var artKey = z.id + "|" + (V ? V.area : V.area) + "|" + r.status;
+    if (k.art.dataset.key !== artKey) {
+      k.art.dataset.key = artKey;
+      k.art.innerHTML = artCard(z, r);
+      k.art.setAttribute("aria-label", z.name + ": аналитика — цены по типам лотов и срок сдачи (данные " + z.sourceName + ")");
     }
 
     k.cls.textContent = (z.zhkClass === "Премиум" ? "Премиум" : "Бизнес") + "-класс";
@@ -299,14 +321,14 @@
 
     if (e.available) {
       k.price.textContent = "от " + mln(e.costMln);
-      k.priceCap.textContent = "за " + state.area + " м² · " + e.group.type.toLowerCase();
+      k.priceCap.textContent = "за " + V.area + " м² · " + e.group.type.toLowerCase();
       k.range.innerHTML = "до " + mln(e.costToMln) + " по верхней границе" +
         (z.pricePerM2Avg ? " · средняя цена метра по ЖК " + num(z.pricePerM2Avg) + " ₽" : "");
       k.how.innerHTML =
         "Считаем не по «цене от за м²» комплекса: так агрегатор показывает метр самого дешёвого лота (обычно большого, углового или без вида). " +
         "Берём цену метра фактического минимального лота нужной категории: в «" + esc(z.name) + "» " + esc(e.group.type).toLowerCase() +
         " — от " + dec(e.group.minAreaM2) + " м² за " + mln(e.group.fromMln) + ", то есть <b>" + num(e.entryPpm) + " ₽/м²</b>. Ваш метраж: " +
-        state.area + " м² × " + num(e.entryPpm) + " ₽ = <b>" + mln(e.costMln) + "</b>." +
+        V.area + " м² × " + num(e.entryPpm) + " ₽ = <b>" + mln(e.costMln) + "</b>." +
         (e.understatePct > 3
           ? "<br /><br />По формуле «цена от × площадь» получилось бы <b>" + mln(e.naiveMln) + "</b> — на " + e.understatePct +
             "% ниже реальной цены входа. Таких квартир в продаже нет, поэтому мы так не обещаем."
@@ -320,7 +342,7 @@
       var floorPrice = z.minLotMln || e.minLotPriceMln || 0;
       k.price.textContent = "от " + mln(floorPrice);
       k.priceCap.textContent = "минимальный лот в ЖК";
-      k.range.innerHTML = "Квартир " + state.area + " м² и меньше в продаже <b>нет</b>: самая маленькая — " +
+      k.range.innerHTML = "Квартир " + V.area + " м² и меньше в продаже <b>нет</b>: самая маленькая — " +
         (e.minAreaM2 ? dec(e.minAreaM2) + " м²" : "—") + " за " + mln(floorPrice);
       k.how.textContent = "Мы не показываем цену несуществующей квартиры: " + e.reason + ". Источник: " + z.sourceName + ", цена зафиксирована " + z.priceAsOf + ".";
       k.meter.style.width = "100%";
@@ -344,7 +366,7 @@
         (r.naiveTrap ? " По «цена от × площадь» прошло бы (" + mln(r.estimate.naiveMln) + "), но такого лота нет в продаже." : "");
     } else {
       mark.innerHTML = icon("info");
-      verdict.innerHTML = capFirst(esc(r.reason)) + ". Значит, " + state.area + " м² здесь купить нельзя — и мы не рисуем «вам хватает».";
+      verdict.innerHTML = capFirst(esc(r.reason)) + ". Значит, " + V.area + " м² здесь купить нельзя — и мы не рисуем «вам хватает».";
     }
 
     if (e.available && r.cost) {
@@ -393,9 +415,9 @@
 
   /* ------------------------------------------------------------------ вердикт + термометр */
   function renderVerdict(res) {
-    var v = $("verdict"), prep = CITY_PREP[state.city] || ("в " + state.city);
+    var v = $("verdict"), prep = CITY_PREP[V.city] || ("в " + V.city);
     var capNote = res.queryCapApplied
-      ? " Считаю по потолку из запроса: " + money(res.capMln) + " млн ₽ (в поле бюджета указано " + money(state.budget) + " млн)." : "";
+      ? " Считаю по потолку из запроса: " + money(res.capMln) + " млн ₽ (в поле бюджета указано " + money(V.budget) + " млн)." : "";
     var head, sub;
     var narrowed = res.cityCountAll > res.cityCount
       ? "Ваши слова оставили " + res.cityCount + " из " + res.cityCountAll + " ЖК " + prep + " — остальные не подходят по тексту карточки. " : "";
@@ -405,14 +427,22 @@
         "Нажмите «Сбросить» — расчёт останется на обычных полях бюджета и метража, или попробуйте слова, которые в карточках встречаются: " +
         "море, парк, метро, «сдан», отделка.";
     } else if (!res.cityCount) {
-      head = "Нет данных по городу «" + state.city + "»";
+      head = "Нет данных по городу «" + V.city + "»";
       sub = "В базе 15 ЖК: " + cities().join(", ") + ".";
     } else if (res.fittingCount === 0) {
       var cheap = res.cheapest ? res.cheapest.entryFloor : null;
       head = "В бюджете " + money(res.capMln) + " млн ₽ подходящих ЖК " + prep + " нет";
-      sub = "Самый дешёвый вход " + prep + (state.klass !== "Все" ? " в классе «" + state.klass.toLowerCase() + "»" : "") + " — " +
+      var off = [];
+      if (V.klass !== "Все") off.push('класс «' + V.klass.toLowerCase() + '»');
+      if (V.district) off.push('район «' + V.district + '»');
+      if (V.intents && V.intents.length) off.push('галочки «что важно рядом»');
+      if (V.query) off.push('слова запроса');
+      sub = "Самый дешёвый вход " + prep + (V.klass !== "Все" ? " в классе «" + V.klass.toLowerCase() + "»" : "") +
+        (V.district ? ", район " + V.district : "") + " — " +
         (cheap ? mln(cheap) + " (" + esc(res.cheapest.zhk.name) + ")" : "не найден") +
-        "." + capNote + " " + narrowed + "Увеличьте бюджет, снимите фильтр класса или выберите другой город.";
+        "." + capNote + " " + narrowed +
+        (off.length ? " Снимите фильтр — " + off.join(", ") + " — или увеличьте бюджет."
+                    : " Увеличьте бюджет или выберите другой город.");
     } else if (res.fittingCount >= res.cityCount) {
       head = "Все " + res.fittingCount + " ЖК " + prep +
         (res.cityCountAll > res.cityCount ? " (из " + res.cityCountAll + " в базе — остальные отсекает запрос)" : "") +
@@ -433,8 +463,8 @@
         var need = Math.ceil(Math.min.apply(null, overRows.map(function (r) { return r.cost; })) * 1.08);
         if (need > res.capMln && need <= 400) lift = need;
       } else if (unavRows.length) {
-        var minA = Math.min.apply(null, cityList(state.city).map(function (z) { return z.minAreaM2 || 999; }));
-        if (minA < state.area) areaFix = Math.round(minA + 2);
+        var minA = Math.min.apply(null, cityList(V.city).map(function (z) { return z.minAreaM2 || 999; }));
+        if (minA < V.area) areaFix = Math.round(minA + 2);
       }
     }
     var leader = res.top[0];
@@ -442,7 +472,7 @@
     var reserve = leader ? leader.reserve : 0;
     v.innerHTML = '<div><h2>' + esc(head) + "</h2><p>" + sub + "</p>" +
       '<div class="v-pills">' +
-        '<div class="v-pill"><span>Ваш запрос</span><b>' + state.area + " м² · " + money(res.capMln) + " млн ₽" + (state.klass !== "Все" ? " · " + state.klass.toLowerCase() : "") + "</b></div>" +
+        '<div class="v-pill"><span>Ваш запрос</span><b>' + V.area + " м² · " + money(res.capMln) + " млн ₽" + (V.klass !== "Все" ? " · " + V.klass.toLowerCase() : "") + "</b></div>" +
         '<div class="v-pill"><span>Проходит в бюджет</span><b>' + res.fittingCount + " из " + res.cityCount + " ЖК</b></div>" +
         (lift ? '<button class="v-pill lift" type="button" id="liftBudget" data-to="' + lift + '">' +
                 "<span>Поднять бюджет до</span><b>" + lift + " млн ₽</b></button>" : "") +
@@ -477,6 +507,11 @@
   }
 
   /* ------------------------------------------------------------------ подсказки панели */
+  function intentLabel(k) {
+    for (var i = 0; i < C.INTENTS.length; i++) if (C.INTENTS[i].key === k) return C.INTENTS[i].label;
+    return INTENT_LABELS[k] || k;
+  }
+
   function renderPanelHints(res) {
     var list = cityList(state.city);
     var ppms = list.map(function (z) { return z.pricePerM2; });
@@ -486,13 +521,22 @@
     var minA = Math.min.apply(null, list.map(function (z) { return z.minAreaM2 || 999; }));
     $("maxPpmHint").textContent = minA && minA < 900 ? "в базе есть лоты от " + dec(minA) + " м²" : "";
     $("budgetPctHint").textContent = "при " + state.area + " м² это " + num(res.capMln * 1e6 / state.area) + " ₽ за м²";
-    $("ctaCount").textContent = "Подобрано " + res.top.length + " из " + res.cityCount +
-      (state.klass !== "Все" ? " ЖК класса «" + state.klass.toLowerCase() + "»" : "");
-    $("ctaNote").textContent = res.fittingCount ? "цена входа, остаток, ипотека" : "увеличьте бюджет или снимите фильтр";
+    if (document.activeElement !== $("budgetRub")) $("budgetRub").value = rubTxt(state.budgetRub);   // не перетирать, пока печатают
+    $("budgetEcho").textContent = "= " + money(state.budget) + " млн ₽";
+
+    var fit = res.fittingCount;
+    $("goCount").textContent = fit;
+    $("ctaCount").textContent = fit ? "Есть подходящие варианты: " + fit + " из " + res.cityCount : "Подходящих не нашлось: 0 из " + res.cityCount;
+    var want = (state.intents || []).map(intentLabel);
+    $("ctaNote").textContent = state.city + " · " + rubTxt(state.budgetRub) + " ₽ · " + state.area + " м²" +
+      (state.district ? " · " + state.district : "") + (want.length ? " · " + want.join(" + ") : "") +
+      (state.klass !== "Все" ? " · " + state.klass.toLowerCase() : "");
+    $("goLabel").textContent = applied() ? "Подобрать ещё раз" : "Подобрать новостройку";
+    $("goCount").textContent = fit;
+    $("marketBtnCount").textContent = list.length;
     renderMood();
     renderBudgetHint();
-    var q = res.query || {};
-    renderIntent(q, res);
+    renderIntent(res.query, res);
   }
 
   var INTENT_LABELS = { sea: "у моря", park: "у парка", school: "школа и сад рядом", metro: "у метро", done: "уже сданные", soon: "сдача в 2026", studio: "студия", one: "1 комната", two: "2 комнаты", three: "3 комнаты", premium: "премиум", business: "бизнес", finishing: "с отделкой" };
@@ -510,7 +554,8 @@
       bits.push("площадь до " + q.areaMax + " м² (вы написали)");
     }
     if (q.klass) bits.push("класс " + q.klass.toLowerCase() + " (из запроса)");
-    if (!bits.length) { host.innerHTML = state.query ? "<b>Ничего конкретного в запросе не нашёл — работают ползунки.</b>" : ""; return; }
+    if (res.params && res.params.district) bits.push("район: " + res.params.district);
+    if (!bits.length) { host.innerHTML = state.query ? "<b>Ничего конкретного в запросе не нашёл — считаются поля бюджета и метража.</b>" : ""; return; }
     host.innerHTML = "<b>Понял запрос так:</b>" + bits.map(function (b) { return '<span class="chip">' + esc(b) + "</span>"; }).join("") +
       '<span class="chip" style="border-style:dashed">подошло ' + res.fittingCount + " из " + res.cityCount + " ЖК" +
         (res.cityCountAll > res.cityCount ? " (в городе " + res.cityCountAll + ", остальным не соответствуют слова запроса)" : "") + "</span>";
@@ -562,7 +607,7 @@
     var fit = {};
     (last ? last.all : []).forEach(function (r) { fit[r.zhk.id] = r.status; });
     var rows = DATA.map(function (z) {
-      var st = z.city === state.city ? (fit[z.id] || "na") : "na";
+      var st = z.city === (V ? V.city : state.city) ? (fit[z.id] || "na") : "na";
       var badge = st === "fits" ? "проходит в бюджет" : st === "tight" ? "на пределе" : st === "over" ? "не хватает" : st === "unavailable" ? "нет такой площади" : "";
       var tone = st === "fits" ? 1 : st === "tight" ? 2 : (st === "over" || st === "unavailable") ? 0 : "";
       return '<tr data-fits="' + tone + '">' +
@@ -582,12 +627,344 @@
     }).join("");
     $("tableWrap").innerHTML = '<table><caption>Срез из 15 новостроек (Сочи, Москва, Екатеринбург, цены от ' +
       "15.11.2026): объявленная «цена от» за м², реальная верхняя граница ₽/м², минимальный лот и минимальная площадь в продаже. " +
-      "Подсветка слева — результат текущего подбора по городу «" + esc(state.city) + "». " +
+      "Подсветка слева — результат текущего подбора по городу «" + esc(V ? V.city : state.city) + "». " +
       '<span class="only-mobile">На телефоне скрыты три второстепенные колонки (застройщик, макс. ₽/м², число лотов) — ' +
       "они есть в CSV и на широком экране.</span></caption>" +
       "<thead><tr>" + ["№", "Город", "ЖК", "Застройщик", "Район", "Класс в источнике", "Класс (наш)", "цена от ₽/м²", "макс. ₽/м²", "мин. лот", "мин. площадь", "лотов", "Срок сдачи", "Дата цены", "Источник"]
         .map(function (h) { return '<th scope="col"' + (WIDE_COLS[h] ? ' class="wide"' : "") + ">" + h + "</th>"; }).join("") + "</tr></thead><tbody>" + rows + "</tbody></table>";
     tableDirty = false;
+  }
+
+  /* ------------------------------------------------------------------ аналитическая графика */
+  /* Что рисуется — только поля источника: цены лотов, ₽/м², срок сдачи.
+     «Готовность» — это НЕ данные о ходе работ: календарная шкала от заявленного срока сдачи,
+     она так и подписана. Отдельных строек с этапами в карточке агрегатора нет. */
+  var ART_A = 2021, ART_B = 2028, ART_TODAY = 2026.87;   // границы шкалы и дата среза (15-16.11.2026)
+
+  function lotName(t) { return /^студ/i.test(t) ? "студ" : (String(t).charAt(0) + "к"); }
+
+  function artLots(z, lit, x0, w, top, base) {
+    var lots = (z.lots || []).slice(0, 5);
+    if (!lots.length) return "";
+    var max = Math.max.apply(null, lots.map(function (l) { return Math.max(l.toMln || 0, l.fromMln || 0); }));
+    if (!(max > 0)) return "";
+    var gap = 5, span = base - top;
+    var bw = Math.max(9, (w - gap * (lots.length + 1)) / lots.length);
+    var out = "";
+    lots.forEach(function (l, i) {
+      var x = x0 + gap + i * (bw + gap);
+      var a = Math.min((l.fromMln || 0) / max, 1), b = Math.min(Math.max(l.toMln || l.fromMln || 0, 0) / max, 1);
+      var ya = base - span * a, yb = base - span * Math.max(b, a);
+      out += '<rect x="' + x.toFixed(1) + '" y="' + top + '" width="' + bw.toFixed(1) + '" height="' + span.toFixed(1) + '" rx="4" fill="rgba(255,255,255,.07)"/>' +
+             '<rect class="a-bar" style="animation-delay:' + (i * 90) + 'ms" x="' + x.toFixed(1) + '" y="' + yb.toFixed(1) +
+             '" width="' + bw.toFixed(1) + '" height="' + Math.max(2.5, ya - yb).toFixed(1) + '" rx="3" fill="' + lit + '"/>' +
+             '<text class="a-lbl" x="' + (x + bw / 2).toFixed(1) + '" y="' + (top - 5) + '" text-anchor="middle">' + lotName(l.type) + "</text>" +
+             '<text class="a-val" x="' + (x + bw / 2).toFixed(1) + '" y="' + (base + 13) + '" text-anchor="middle">' + dec(l.fromMln) + "</text>";
+    });
+    return out;
+  }
+
+  function artTimeline(z, lit, x0, w, y) {
+    var y0 = z.deliveryYearFrom || z.deliveryYearTo || ART_TODAY;
+    var y1 = z.deliveryYearTo || y0;
+    var fx = function (yy) { return x0 + (Math.min(Math.max(yy, ART_A), ART_B) - ART_A) / (ART_B - ART_A) * w; };
+    var a = fx(y0), b = fx(Math.min(y1, ART_TODAY)), today = fx(ART_TODAY);
+    var ready = y1 <= 2026;
+    return '<text class="a-cap" x="' + x0 + '" y="' + (y - 12) + '">СРОК СДАЧИ · СРЕЗ 15.11.2026</text>' +
+      '<line x1="' + x0 + '" y1="' + y + '" x2="' + (x0 + w) + '" y2="' + y + '" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-linecap="round"/>' +
+      '<line class="a-line" x1="' + a.toFixed(1) + '" y1="' + y + '" x2="' + Math.max(b, a + 2).toFixed(1) + '" y2="' + y +
+      '" stroke="' + lit + '" stroke-width="5" stroke-linecap="round" style="--len:' + (w + 4) + '"/>' +
+      '<line x1="' + today.toFixed(1) + '" y1="' + (y - 9) + '" x2="' + today.toFixed(1) + '" y2="' + (y + 9) + '" stroke="#fff" stroke-width="1.4" opacity=".72"/>' +
+      '<text class="a-val" x="' + x0 + '" y="' + (y + 17) + '">' + esc(z.delivery || "срок сдачи в источнике не указан") + "</text>" +
+      '<text class="a-note" x="' + x0 + '" y="' + (y + 29) + '">' + (ready ? "заявленный срок уже прошёл" : "заявленный срок ещё не наступил") + "</text>";
+  }
+
+  function artCard(z, r) {
+    var t = theme(z.city);
+    return '<svg viewBox="0 0 320 150" aria-hidden="true">' +
+      artLots(z, t.lit, 6, 120, 48, 106) +
+      artTimeline(z, t.lit, 142, 172, 66) +
+      "</svg>";
+  }
+
+  /* Компактная версия той же аналитики — левая колонка карточки в списке «как в Авито». */
+  /* Компактная аналитика для узкой колонки (158px) карточки в списке «как в Авито».
+     Свои отступы и подписи цен ПОД планками: на этом масштабе обычный artLots
+     сталкивает цифры соседних столбцов. */
+  /* Ширина колонки с графикой в товарной карточке: на десктопе 158px, на мобилке —
+     вся карточка. Возвращаем ширину вьюбокса, чтобы 1 его единица = 1 CSS-пиксель. */
+  /* Размер колонки графики + сколько по высоте можно залить данными,
+     чтобы не осталось пустого тёмного прямоугольника. */
+  function artBox() {
+    var el = document.getElementById("marketList");
+    /* Пробная карточка в тот же грид: браузер сам считает, какой при текущей
+       ширине окна будет колонка графики (158px на десктопе, вся карточка на мобилке). */
+    var probe = document.createElement("div");
+    probe.className = "mk-card";
+    probe.style.cssText = "visibility:hidden;position:absolute;top:0;left:-9999px;height:0";
+    var art = document.createElement("div");
+    art.className = "mk-art";
+    probe.appendChild(art);
+    el.appendChild(probe);
+    var w = Math.round(art.getBoundingClientRect().width) || (innerWidth <= 770 ? Math.min(360, innerWidth - 48) : 158);
+    /* рост колонки = рост тела карточки в этом же ряду грида: так viewBox совпадает
+       с тем, сколько реально закрашено тёмным, и подписи не обрезаются */
+    probe.remove();
+    return w >= 96 ? w : Math.round(el.clientWidth);
+  }
+
+  /* Компактная аналитика для карточки в списке «как в Авито»: лоты по типам,
+     окно сдачи и цена входа. Подписи рисуем здесь свои (не через artLots): в узкой
+     колонке цены соседних столбцов слипались. */
+  function artMini(z) {
+    var t = theme(z.city);
+    var lots = (z.lots || []).slice(0, 5);
+    var y1 = z.deliveryYearTo || z.deliveryYearFrom || 0;
+    var dl = String(z.delivery || "срок не указан").replace(/^Сдача\s*/i, "");
+    var W = artBox();
+    var off = Math.max(10, Math.round((W - 150) / 2) + 4);
+    var right = Math.max(off + 150 - 8, W - 10);
+    var fs = 150 / Math.max(120, W);
+    var st = function (px) { return ' data-k="' + px + '" style="font-size:' + (px * fs).toFixed(2) + 'px"'; };
+    var s = '<svg viewBox="0 0 ' + W + ' 242" aria-hidden="true" preserveAspectRatio="xMidYMid meet">';
+    if (lots.length) {
+      var max = Math.max.apply(null, lots.map(function (l) { return Math.max(l.toMln || 0, l.fromMln || 0); }));
+      var top = 34, base = 118, gap = 4, span = base - top;
+      var bw = Math.max(10, (150 - 8 - gap * (lots.length + 1)) / lots.length);
+      s += '<text class="a-cap"' + st(9.6) + ' x="' + off + '" y="16">ЛОТЫ ПО ТИПАМ · млн ₽</text>';
+      lots.forEach(function (l, i2) {
+        var x = off + gap + i2 * (bw + gap);
+        var a = Math.min((l.fromMln || 0) / max, 1), b = Math.min(Math.max(l.toMln || l.fromMln || 0, 0) / max, 1);
+        var ya = base - span * a, yb = base - span * Math.max(b, a);
+        s += '<rect x="' + x.toFixed(1) + '" y="' + top + '" width="' + bw.toFixed(1) + '" height="' + span + '" rx="3" fill="rgba(255,255,255,.07)"/>' +
+             '<rect class="a-bar" style="animation-delay:' + (i2 * 90) + 'ms" x="' + x.toFixed(1) + '" y="' + yb.toFixed(1) +
+             '" width="' + bw.toFixed(1) + '" height="' + Math.max(2.5, ya - yb).toFixed(1) + '" rx="2" fill="' + t.lit + '"/>' +
+             '<text class="a-lbl"' + st(13) + ' x="' + (x + bw / 2).toFixed(1) + '" y="' + (top - 6) + '" text-anchor="middle">' + lotName(l.type) + "</text>";
+      });
+      s += '<text class="a-val"' + st(11.4) + ' x="' + off + '" y="136">' +
+           esc(dec(lots[0].fromMln) + " – " + dec(Math.max.apply(null, lots.map(function (l) { return l.toMln || l.fromMln || 0; }))) + " млн ₽") + "</text>";
+    } else {
+      s += '<text class="a-cap"' + st(9.6) + ' x="' + off + '" y="16">ЛОТЫ ПО ТИПАМ</text>' +
+           '<text class="a-note"' + st(10.4) + ' x="' + off + '" y="40">источник не отдаёт разбивку</text>' +
+           '<text class="a-note"' + st(10.4) + ' x="' + off + '" y="56">по типам квартир</text>';
+    }
+    s += '<line x1="' + off + '" y1="150" x2="' + right + '" y2="150" stroke="rgba(255,255,255,.14)"/>' +
+      '<text class="a-cap"' + st(9.6) + ' x="' + off + '" y="164">СРОК СДАЧИ</text>' +
+      '<text class="a-val"' + st(11.4) + ' x="' + off + '" y="181">' + esc(dl) + "</text>" +
+      '<text class="a-note"' + st(10.4) + ' x="' + off + '" y="198">' + (y1 && y1 <= 2026 ? "срок уже прошёл" : "срок ещё не наступил") + "</text>" +
+      '<text class="a-val"' + st(11.4) + ' x="' + off + '" y="215">' + esc("вход " + mln(z.minLotMln)) + "</text>" +
+      '<text class="a-note"' + st(10.4) + ' x="' + off + '" y="232">' + esc("цена " + String(z.priceAsOf || "15.11.2026").split(",")[0]) + "</text>";
+    s += "</svg>";
+    return s;
+  }
+
+  /* Полоски ₽/м² по городу — та же логика, что в плитках: «цена от» по каждому ЖК среза. */
+  function artCity(c) {
+    var list = cityList(c);
+    if (!list.length) return "";
+    var max = Math.max.apply(null, list.map(function (z) { return z.pricePerM2; }));
+    var n = list.length, bw = 120 / n - 6;
+    var bars = list.map(function (z, i) {
+      var hpx = Math.max(3, 26 * (z.pricePerM2 / max));
+      return '<rect class="a-bar" style="animation-delay:' + (i * 70) + 'ms" x="' + (3 + i * (bw + 6)).toFixed(1) +
+        '" y="' + (30 - hpx).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + hpx.toFixed(1) + '" rx="2" fill="currentColor"/>';
+    }).join("");
+    return '<svg viewBox="0 0 120 32" preserveAspectRatio="none" aria-hidden="true">' + bars + "</svg>";
+  }
+
+  function renderHeroArt() {
+    var host = $("heroArt");
+    if (!host) return;
+    var list = cityList(state.city), t = theme(state.city);
+    if (!list.length) { host.innerHTML = ""; return; }
+    var max = Math.max.apply(null, list.map(function (z) { return Math.max(z.minLotImpliedPpm || 0, z.pricePerM2); }));
+    var rows = list.slice().sort(function (a, b) { return a.pricePerM2 - b.pricePerM2; }).map(function (z, i) {
+      var w1 = 118 * (z.pricePerM2 / max), w2 = 118 * ((z.minLotImpliedPpm || z.pricePerM2) / max);
+      var name = z.name.replace(/^(ЖК|ГК) /, "").replace(/[«»]/g, "");
+      return '<g class="a-fade" style="animation-delay:' + (i * 80) + 'ms">' +
+        '<text class="h-name" x="0" y="' + (16 + i * 30) + '">' + esc(name.slice(0, 17)) + "</text>" +
+        '<rect class="a-barx" style="animation-delay:' + (i * 80) + 'ms" x="96" y="' + (7 + i * 30) + '" width="' + Math.max(2, w1).toFixed(1) +
+        '" height="7" rx="3.5" fill="rgba(255,255,255,.28)"/>' +
+        '<rect class="a-barx" style="animation-delay:' + (i * 80 + 120) + 'ms" x="96" y="' + (16 + i * 30) + '" width="' + Math.max(2, w2).toFixed(1) +
+        '" height="7" rx="3.5" fill="' + t.lit + '"/>' +
+        '<text class="h-num" x="' + (100 + Math.max(w1, w2)).toFixed(1) + '" y="' + (17 + i * 30) + '">' + num(z.pricePerM2 / 1000) + "→" + num((z.minLotImpliedPpm || z.pricePerM2) / 1000) + "</text>" +
+        "</g>";
+    }).join("");
+    host.innerHTML =
+      "<h3>" + esc(state.city) + ": сколько стоит метр <span>15 ЖК среза · " + esc(t.mood.split(",")[0]) + "</span></h3>" +
+      '<svg viewBox="0 0 320 ' + (18 + list.length * 30) + '" aria-hidden="false" role="img" aria-label="Сравнение объявленной цены метра и фактической цены входа за метр по пяти ЖК">' + rows + "</svg>" +
+      '<div class="ha-legend"><span><i style="background:rgba(255,255,255,.28)"></i>«цена от» за м² в источнике</span>' +
+      "<span><i style=\"background:" + t.lit + '"></i>фактически за метр минимального лота</span>' +
+      "<span>· тыс. ₽/м²</span></div>";
+  }
+
+  /* ------------------------------------------------------------------ расширенные настройки */
+  function renderDistrictChips() {
+    var host = $("districtChips");
+    if (!host) return;
+    var list = cityList(state.city), ds = C.districts(DATA, state.city);
+    var html = ['<button class="chip" type="button" data-district="" aria-pressed="' + (state.district ? "false" : "true") +
+      '">любой · ' + list.length + "</button>"];
+    ds.forEach(function (d) {
+      var n = list.filter(function (z) { return String(z.district || "").toLowerCase().indexOf(d.toLowerCase()) >= 0; }).length;
+      html.push('<button class="chip" type="button" data-district="' + esc(d) + '" aria-pressed="' + (state.district === d ? "true" : "false") +
+        '" title="' + esc(list.filter(function (z) { return z.district === d || String(z.district || "").indexOf(d) === 0; }).map(function (z) { return z.name; }).join(", ")) +
+        '">' + esc(d) + " · " + n + "</button>");
+    });
+    host.innerHTML = html.join("");
+    var note = $("districtNote");
+    if (note) note.textContent = "Районы взяты из поля «Район» карточки источника — ничего не придумано. " +
+      "Число рядом — сколько ЖК этого района попало в срез (в базе 5 на город).";
+  }
+
+  function renderIntentToggles() {
+    var host = $("intentToggles");
+    if (!host) return;
+    var list = cityList(state.city);
+    host.innerHTML = C.INTENTS.map(function (it) {
+      var n = list.filter(function (z) { return C.intentHit(z, it.key); }).length;
+      var on = state.intents.indexOf(it.key) >= 0;
+      var head = '<button class="chip" type="button" data-intent="' + it.key + '" aria-pressed="' + on + '"';
+      head += n ? ' title="' + esc(it.hint) + '"' : ' disabled title="в карточках этого города такого признака нет"';
+      return head + '><i aria-hidden="true"></i>' + esc(it.label) + '<span class="n">' + n + '/' + list.length + '</span></button>';
+    }).join("");
+  }
+
+  /* ------------------------------------------------------------------ список «как в Авито» */
+  var mktSort = "entry", mktAll = false;
+  var MKT_SORTS = [["entry", "по цене входа"], ["ppm", "по ₽/м²"], ["offers", "по выбору лотов"],
+    ["area", "по мин. метражу"], ["delivery", "по сроку сдачи"]];
+
+  /* Поворот экрана или изменение ширины окна: колонка графики меняет размер,
+     а с ней и масштаб подписей — перерисовываем список, если он открыт. */
+  var artTimer = 0;
+  function watchArtBox() {
+    window.addEventListener("resize", function () {
+      clearTimeout(artTimer);
+      artTimer = setTimeout(function () {
+        if (!$("market").hidden) renderMarket();
+      }, 220);
+    });
+  }
+
+  /* Метр ₽/м² этого ЖК относительно разброса по срезу города — HTML-строка под графиком,
+     чтобы занимать ровно столько, сколько осталось в колонке, и ничего не обрезалось. */
+  function artMeter(z) {
+    var list = cityList(z.city).filter(function (x) { return x.pricePerM2 > 0; });
+    if (list.length < 2 || !(z.pricePerM2 > 0)) return "";
+    var lo = Math.min.apply(null, list.map(function (x) { return x.pricePerM2; }));
+    var hi = Math.max.apply(null, list.map(function (x) { return x.pricePerM2; }));
+    var f = Math.round(Math.min(Math.max((z.pricePerM2 - lo) / (hi - lo || 1), 0), 1) * 100);
+    return '<div class="mk-meter"><span class="mlab">МЕТР В ГОРОДЕ, ₽/м²</span>' +
+      '<b class="mval">' + esc(num(z.pricePerM2)) + "</b>" +
+      '<span class="mk-track"><span class="mk-dot" style="left:' + f + '%"></span></span>' +
+      '<span class="mmin">' + esc(num(lo / 1000) + " тыс.") + '</span><span class="mmax">' + esc(num(hi / 1000) + " тыс.") + "</span>" +
+      '<small>шкала по ' + list.length + " ЖК среза, не по рынку</small></div>";
+  }
+
+  function renderMarketSort() {
+    var host = $("marketSort");
+    if (!host) return;
+    host.innerHTML = MKT_SORTS.map(function (x) {
+      return '<button class="chip" type="button" data-sort="' + x[0] + '" aria-pressed="' + (mktSort === x[0]) + '">' + x[1] + "</button>";
+    }).join("");
+  }
+
+  function renderMarket() {
+    if (!$("marketList")) return;
+    paintMarket();
+  }
+
+  /* Колонка графики известна по размеру только когда список в потоке: после вставки
+     пересчитываем viewBox по факту (одним кадром), иначе scale = 1 и подписи плывут. */
+  function renderMarket() {
+    if (!$("marketList")) return;
+    paintMarket();
+  }
+
+  /* Колонка графики известна по размеру только когда список в потоке: после вставки
+     пересчитываем viewBox по факту (одним кадром), иначе scale = 1 и подписи плывут. */
+  var artSyncLeft = 0;
+  function syncArtView() {
+    requestAnimationFrame(function () {
+      [].forEach.call(document.querySelectorAll("#marketList .mk-card"), function (card) {
+        var art = card.querySelector(".mk-art"), svg = card.querySelector(".mk-art svg");
+        if (!art || !svg) return;
+        var w = Math.round(art.getBoundingClientRect().width), h = Math.round(art.getBoundingClientRect().height);
+        if (w < 96 || h < 60) return;
+        var cur = (svg.getAttribute("viewBox") || "").split(" ");
+        if (cur[2] === String(w) && cur[3] === String(h)) return;
+        /* блок «метр в городе» рисуется только если под него есть место; при первом
+           рендере место было оценкой — дорисовываем один раз по факту */
+        if (cur[3] !== "242" && h < +cur[3] && artSyncLeft > 0) { artSyncLeft--; paintMarket(); return; }
+        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+        svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
+        [].forEach.call(svg.querySelectorAll("text"), function (t) {
+          var k = +t.getAttribute("data-k") || 1;
+          t.setAttribute("style", "font-size:" + (k * (150 / Math.max(120, w))).toFixed(2) + "px");
+        });
+      });
+    });
+  }
+
+  function paintMarket() {
+    var host = $("marketList");
+    if (!host) return;
+    var p = params(V || state);
+    var cap = p.query.budgetMax ? Math.min(p.budgetMln, p.query.budgetMax) : p.budgetMln;
+    var rows = (mktAll ? DATA.slice() : cityList(p.city)).map(function (z) {
+      var r = C.evaluate(z, p, cap);
+      return { z: z, r: r };
+    });
+    var key = {
+      entry: function (x) { return x.z.minLotMln; },
+      ppm: function (x) { return x.z.pricePerM2; },
+      offers: function (x) { return -(x.z.offers || 0); },
+      area: function (x) { return x.z.minAreaM2 || 999; },
+      delivery: function (x) { return -(x.z.deliveryYearTo || 0); }
+    }[mktSort];
+    rows.sort(function (a, b) { return key(a) - key(b); });
+    host.innerHTML = rows.map(function (x) {
+      var z = x.z, r = x.r, ok = r.status === "fits" || r.status === "tight";
+      var price = r.estimate && r.estimate.available ? "от " + mln(r.estimate.costMln) : "от " + mln(z.minLotMln);
+      var what = r.estimate && r.estimate.available
+        ? "за " + p.areaM2 + " м² · " + r.estimate.group.type.toLowerCase()
+        : "минимальный лот ЖК · " + (z.minAreaM2 ? dec(z.minAreaM2) + " м²" : "—");
+      var badge = r.status === "fits" ? "проходит в бюджет" : r.status === "tight" ? "впритык"
+        : r.status === "over" ? "не хватает " + mln(r.need) : "нет такой площади";
+      return '<article class="mk-card' + (ok ? " is-fit" : "") + '">' +
+        '<div class="mk-art">' + artMini(z) + artMeter(z) + "</div>" +
+        '<div class="mk-body">' +
+          '<h3 class="mk-name">' + esc(z.name) + "<em>" + esc(z.zhkClass) + "</em><em>" + esc(badge) + "</em></h3>" +
+          '<div class="mk-price">' + price + '</div><div class="mk-ppm">' + esc(what) + " · метр " + num(z.pricePerM2) +
+          "–" + num(z.pricePerM2Max || z.pricePerM2) + " ₽" + (z.pricePerM2Avg ? " · средн. " + num(z.pricePerM2Avg) : "") + "</div>" +
+          '<ul class="mk-facts">' +
+            "<li>" + esc(z.developer) + "</li><li>" + esc(z.district) + "</li>" +
+            "<li>лотов " + (z.offers || "уточняется") + "</li>" +
+            "<li>" + esc(String(z.delivery || "срок не указан").replace(/^Сдача\s*/i, "")) + "</li>" +
+            "<li>цена от " + esc((z.priceAsOf || "15.11.2026").split(",")[0]) + "</li>" +
+          "</ul>" +
+          '<div class="mk-foot"><a target="_blank" rel="noopener" href="' + esc(z.sourceUrl) + '">' + icon("link") + " Квартиры на " + esc(z.sourceName) +
+          '</a><button class="chip" type="button" data-save="' + esc(z.name) + '">' + icon(saved.indexOf(z.name) >= 0 ? "check" : "scale") +
+          (saved.indexOf(z.name) >= 0 ? " В подборке" : " В подборку") + "</button></div>" +
+        "</div></article>";
+    }).join("");
+    var n = (V || state).city;
+    $("marketH").textContent = mktAll ? "Все новостройки среза: 15 ЖК, три города" : "Все новостройки: " + n;
+    $("marketNote").textContent = "Срез исследования — 5 ЖК на город (не весь рынок). Сортировка: " +
+      (MKT_SORTS.filter(function (x) { return x[0] === mktSort; })[0] || ["", "—"])[1] +
+      " · цена " + (r_asOf()) + " · метр и лоты — из карточки источника";
+    $("marketAll").setAttribute("aria-pressed", String(mktAll));
+    $("marketAll").textContent = mktAll ? "Только " + n + " — 5 ЖК" : "Показать весь срез — 15 ЖК";
+  }
+
+  function r_asOf() { return "15-16.11.2026"; }
+
+  function showMarket() {
+    $("market").hidden = false;
+    renderMarket();
+    var y = $("market").getBoundingClientRect().top + window.scrollY - 74;
+    window.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? "auto" : "smooth" });
   }
 
   /* ------------------------------------------------------------------ заявка / сравнение */
@@ -599,6 +976,7 @@
       ? "Локально собрано " + saved.length + " ЖК. Отправка не подключена (демо без бэкенда)."
       : "Демо-форма: отправка не подключена (нет бэкенда). В проде — CRM или Telegram-бот застройщика.";
     (last ? last.top.concat(last.rest) : []).forEach(function (r) { updateCard(cardCache.get(r.zhk.id), r, last.top[0] === r); });
+    if ($("market") && !$("market").hidden) renderMarket();
   }
 
   /* ------------------------------------------------------------------ URL */
@@ -608,46 +986,96 @@
       var u = new URL(location.href);
       u.search = "";
       u.searchParams.set("city", state.city);
-      u.searchParams.set("budget", state.budget);
+      u.searchParams.set("budget", state.budget);          // млн — старый формат ссылки остаётся валидным
+      u.searchParams.set("rub", state.budgetRub);          // и рубли, если делитесь из новой панели
       u.searchParams.set("area", state.area);
       if (state.klass !== "Все") u.searchParams.set("klass", state.klass);
+      if (state.district) u.searchParams.set("district", state.district);
+      if (state.intents.length) u.searchParams.set("want", state.intents.join(","));
       if (state.query) u.searchParams.set("q", state.query);
       history.replaceState(null, "", u.pathname + "?" + u.searchParams.toString());
     } catch (e) { /* file:// и урезанные браузеры — не критично */ }
   }
 
+  var deepLinked = false;
   function readUrl() {
     if (!location.search) return;
     var p = new URLSearchParams(location.search);
-    if (p.get("city") && cities().indexOf(p.get("city")) >= 0) state.city = p.get("city");
-    if (p.get("budget")) state.budget = clamp(p.get("budget"), 1, 400);
-    if (p.get("area")) state.area = clamp(p.get("area"), 12, 400);
-    if (["Бизнес", "Премиум"].indexOf(p.get("klass")) >= 0) state.klass = p.get("klass");
-    if (p.get("q")) state.query = String(p.get("q")).slice(0, 120);
+    var any = false;
+    if (p.get("city") && cities().indexOf(p.get("city")) >= 0) { state.city = p.get("city"); any = true; }
+    if (p.get("rub")) { state.budgetRub = snapRub(parseRub(p.get("rub"))); state.budget = rubToMln(state.budgetRub); any = true; }
+    else if (p.get("budget")) { state.budget = clamp(p.get("budget"), 1, 400); state.budgetRub = Math.round(state.budget * 1e6); any = true; }
+    if (p.get("area")) { state.area = clamp(p.get("area"), 12, 400); any = true; }
+    if (["Бизнес", "Премиум"].indexOf(p.get("klass")) >= 0) { state.klass = p.get("klass"); any = true; }
+    if (p.get("district")) {
+      var dd = String(p.get("district")).slice(0, 60);
+      if (C.districts(DATA, state.city).some(function (d) { return d.toLowerCase() === dd.toLowerCase(); })) { state.district = dd; any = true; }
+    }
+    if (p.get("want")) {
+      state.intents = String(p.get("want")).split(",").map(function (x) { return x.trim(); })
+        .filter(function (k) { return C.INTENTS.some(function (i) { return i.key === k; }); });
+      if (state.intents.length) any = true;
+    }
+    if (p.get("q")) { state.query = String(p.get("q")).slice(0, 120); any = true; }
+    deepLinked = any;   // по ссылке с параметрами результат показываем сразу — человек уже всё выбрал
   }
 
   /* ------------------------------------------------------------------ рендер */
-  function render() {
+  /* Превью: тихий пересчёт. Обновляются только счётчики, подсказки, графика и сама панель —
+     страница никуда не прокручивается, список внизу не меняется, пока не нажата кнопка. */
+  function preview() {
     if (!DATA.length || !C) { fatal(); return; }
     var res;
-    try { res = C.match(DATA, params()); }
+    try { res = C.match(DATA, params(state)); }
     catch (err) { $("verdict").innerHTML = "<div><h2>Ошибка расчёта</h2><p>" + esc(err.message) + "</p></div>"; return; }
+    renderPanelHints(res);
+    if (V) setDirty(true);
+  }
+
+  function setDirty(on) {
+    var bar = $("ctaBar");
+    if (bar) bar.classList.toggle("is-dirty", !!on);
+    var hint = $("ctaHint");
+    if (hint) hint.hidden = !on;
+  }
+
+  /* Применить набранное — единственный момент, когда под панелью появляется список. */
+  function apply(scroll) {
+    if (!DATA.length || !C) { fatal(); return; }
+    var res;
+    try { res = C.match(DATA, params(state)); }
+    catch (err) { $("verdict").innerHTML = "<div><h2>Ошибка расчёта</h2><p>" + esc(err.message) + "</p></div>"; return; }
+    V = { city: state.city, budget: state.budget, budgetRub: state.budgetRub, area: state.area,
+          klass: state.klass, query: state.query, district: state.district, intents: state.intents.slice() };
     last = res;
     tableDirty = true;
-
+    $("results").hidden = false;
     renderPanelHints(res);
     renderVerdict(res);
-    $("cardsH").textContent = (res.fittingCount ? "Топ-" + res.top.length : "Варианты") + " новостроек " + (CITY_PREP[state.city] || ("в " + state.city)) +
-      " · " + state.area + " м² · бюджет " + money(res.capMln) + " млн ₽";
+    $("cardsH").textContent = (res.fittingCount ? "Топ-" + res.top.length : "Варианты") + " новостроек " +
+      (CITY_PREP[V.city] || ("в " + V.city)) + " · " + V.area + " м² · бюджет " + rubTxt(V.budget * 1e6) + " ₽";
     syncCards($("topCards"), res.top, true);
     syncCards($("excludedCards"), res.rest, false);
     $("excludedWrap").hidden = res.rest.length === 0;
-    if (!res.top.length) { $("excludedWrap").open = true; $("cardsH").textContent = "Ни один ЖК " + (CITY_PREP[state.city] || state.city) + " не подошло — ниже причины по каждому"; }
-    if (res.rest.length) $("excludedTitle").textContent = "Почему ещё " + res.rest.length + " ЖК " + (CITY_PREP[state.city] || state.city) + " не подошли";
+    if (!res.top.length) { $("excludedWrap").open = true; $("cardsH").textContent = "Ни один ЖК " + (CITY_PREP[V.city] || V.city) + " не подошло — ниже причины по каждому"; }
+    if (res.rest.length) $("excludedTitle").textContent = "Почему ещё " + res.rest.length + " ЖК " + (CITY_PREP[V.city] || V.city) + " не подошли";
     renderSheet();
     renderMethod();
     renderTable();
+    renderMarket();
+    setDirty(false);
     syncUrl();
+    if (scroll !== false) {
+      var y = $("results").getBoundingClientRect().top + window.scrollY - 74;
+      window.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? "auto" : "smooth" });
+    }
+  }
+
+  /* Список уже показан? Тогда кнопка честно называется «Подобрать ещё раз». */
+  function applied() { return !!V; }
+
+  function reducedMotion() {
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
 
   function fatal() {
@@ -659,68 +1087,135 @@
   function on(el, ev, fn) { if (el) el.addEventListener(ev, fn); }
 
   /* Единая точка применения готового сценария: чипсы-сцены и «выгодные предложения». */
+  /* Единая точка применения готового сценария: чипсы-сцены и «выгодные предложения».
+     Сценарий = набор параметров: ставим в черновик и сразу показываем результат (это явное действие). */
   function applyScene(s, scroll) {
     if (!s) return;
     var changedCity = s.city && s.city !== state.city;
     state.city = s.city || state.city;
-    state.budget = clamp(s.budget, 1, 400); state.area = clamp(s.area, 12, 400);
-    state.klass = s.klass || "Все"; state.query = s.q || "";
+    state.budget = clamp(s.budget, 1, 400);
+    state.budgetRub = Math.round(state.budget * 1000000);
+    state.area = clamp(s.area, 12, 400);
+    state.klass = s.klass || "Все";
+    state.query = s.q || "";
+    state.district = s.district || "";
+    state.intents = (s.intents || []).slice();
     $("queryInput").value = state.query;
-    $("budgetInput").value = state.budget; $("areaInput").value = state.area;
-    [].forEach.call(document.querySelectorAll("[data-budget]"), function (x) { x.setAttribute("aria-pressed", String(parseFloat(x.dataset.budget) === state.budget)); });
-    [].forEach.call(document.querySelectorAll("[data-area]"), function (x) { x.setAttribute("aria-pressed", String(parseFloat(x.dataset.area) === state.area)); });
-    [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) { x.setAttribute("aria-pressed", String(x.dataset.klass === state.klass)); });
+    $("budgetRub").value = rubTxt(state.budgetRub);
+    $("areaInput").value = state.area;
+    [].forEach.call(document.querySelectorAll("[data-budget]"), function (x) { x.setAttribute("aria-pressed", String(parseNum(x.dataset.budget) === state.budget)); });
+    [].forEach.call(document.querySelectorAll("[data-area]"), function (x) { x.setAttribute("aria-pressed", String(parseNum(x.dataset.area) === state.area)); });
+    markKlass();
     if (changedCity) $("finder").classList.add("city-switch");
     syncCityUI();
-    render();
+    renderDistrictChips();
+    renderIntentToggles();
     if (changedCity) setTimeout(function () { $("finder").classList.remove("city-switch"); }, 620);
-    if (scroll) $("results").scrollIntoView({ block: "start" });
+    apply(scroll);
   }
   function bind() {
-    var bi = $("budgetInput"), ai = $("areaInput");
-    bi.value = state.budget; ai.value = state.area; $("queryInput").value = state.query;
+    var bi = $("budgetRub"), ai = $("areaInput");
+    var raf = 0;
+    function queue() { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; preview(); }); }
+
+    /* ------------------------------------------------------------------ бюджет: полные рубли */
     var BUDGETS = [1, 3, 5, 10, 15, 20, 30, 50, 100, 200, 400];
     var AREAS = [[18, "студия с кухней"], [28, "студия"], [45, "1-комн."], [65, "2-комн."], [95, "3-комн."], [130, "4-комн."], [180, "просторно"]];
     $("budgetPresets").innerHTML = BUDGETS.map(function (v) {
-      return '<button class="chip" type="button" data-budget="' + v + '" aria-pressed="false">до ' + v + " млн</button>";
+      return '<button class="chip" type="button" data-budget="' + v + '" aria-pressed="false">до ' +
+        num(v * 1000000) + " ₽<small>" + v + " млн</small></button>";
     }).join("");
     $("areaPresets").innerHTML = AREAS.map(function (a) {
       return '<button class="chip" type="button" data-area="' + a[0] + '" aria-pressed="false">' + a[1] + " " + a[0] + " м²</button>";
     }).join("");
-    var raf = 0;
-    function queue() { if (raf) return; raf = requestAnimationFrame(function () { raf = 0; render(); }); }
-    function stripCaps() {   // пользователь двигает ползунок сам -> убираем числовые ограничения из слов запроса
+
+    function mark(kind, v) {
+      [].forEach.call(document.querySelectorAll("[data-" + kind + "]"), function (b) {
+        b.setAttribute("aria-pressed", String(parseNum(b.dataset[kind]) === v));
+      });
+    }
+    /* Пока человек печатает, сумму не клампим: «15» — это 15 ₽, а не «миллион». Ограничения
+       (1–400 млн) наводим на blur, чтобы поле и расчёт не расходились. */
+    function budgetFromInput() {
+      var raw = parseRub(bi.value);
+      state.budgetRub = raw;
+      state.budget = Math.max(0.01, Math.round(raw / 10000) / 100);
+      mark("budget", state.budget);
+      queue();
+    }
+    function setBudgetRub(r) {
+      stripCaps();
+      state.budgetRub = snapRub(r);
+      state.budget = rubToMln(state.budgetRub);
+      bi.value = rubTxt(state.budgetRub);
+      mark("budget", state.budget);
+      queue();
+    }
+    function setArea(v) {
+      stripCaps();
+      state.area = clamp(v, 12, 400);
+      ai.value = state.area;
+      mark("area", state.area);
+      queue();
+    }
+    function stripCaps() {   // пользователь сам правит цифры -> снимаем числовые ограничения из слов
       if (!state.query) return;
       var clean = state.query
         .replace(/(до|не дороже|не больше|от)\s*\d+([.,]\d+)?\s*(млн|м\b|м²)/gi, "")
         .replace(/\d+\s*(м2|м²)/gi, "").replace(/\s{2,}/g, " ").trim();
       if (clean !== state.query) { state.query = clean; $("queryInput").value = clean; }
     }
-    function setBudget(v) { stripCaps(); state.budget = clamp(v, 1, 400); bi.value = money(state.budget); mark("budget", state.budget); queue(); }
-    function setArea(v) { stripCaps(); state.area = clamp(v, 12, 400); ai.value = state.area; mark("area", state.area); queue(); }
-    function mark(kind, v) {
-      [].forEach.call(document.querySelectorAll("[data-" + kind + "]"), function (b) {
-        b.setAttribute("aria-pressed", String(parseNum(b.dataset[kind]) === v));
-      });
-    }
-    bi.addEventListener("input", function () { setBudget(bi.value); });
-    ai.addEventListener("input", function () { setArea(ai.value); });
-    [bi, ai].forEach(function (inp) { inp.addEventListener("change", function () { inp.blur(); render(); }); });
-    on($("budgetMore"), "click", function () { setBudget(state.budget + 5); });
-    on($("budgetLess"), "click", function () { setBudget(state.budget - 5); });
+
+    bi.value = rubTxt(state.budgetRub); ai.value = state.area; $("queryInput").value = state.query;
+    bi.addEventListener("input", function () {
+      var digits = bi.value.slice(0, bi.selectionStart == null ? bi.value.length : bi.selectionStart).replace(/[^0-9]/g, "").length;
+      budgetFromInput();
+      bi.value = rubTxt(parseRub(bi.value));            // «15000000» -> «15 000 000» на глазах
+      var seen = 0, pos = 0;
+      while (pos < bi.value.length && seen < digits) { if (bi.value.charAt(pos) >= "0" && bi.value.charAt(pos) <= "9") seen++; pos++; }
+      try { bi.setSelectionRange(pos, pos); } catch (e) { }
+    });
+    bi.addEventListener("blur", function () { setBudgetRub(state.budgetRub || 1000000); });
+    bi.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); setBudgetRub(state.budgetRub); apply(); } });
+    ai.addEventListener("input", function () { state.area = parseNum(ai.value) || state.area; mark("area", state.area); queue(); });
+    ai.addEventListener("blur", function () { setArea(ai.value); });
+    ai.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); setArea(ai.value); apply(); } });
+    on($("budgetMore"), "click", function () { setBudgetRub((state.budgetRub || 0) + 500000); });
+    on($("budgetLess"), "click", function () { setBudgetRub((state.budgetRub || 0) - 500000); });
+    [].forEach.call(document.querySelectorAll("[data-budget]"), function (b) {
+      b.addEventListener("click", function () { setBudgetRub(parseNum(b.dataset.budget) * 1000000); });
+    });
+    [].forEach.call(document.querySelectorAll("[data-area]"), function (b) {
+      b.addEventListener("click", function () { setArea(b.dataset.area); });
+    });
     mark("budget", state.budget); mark("area", state.area);
 
-    [].forEach.call(document.querySelectorAll("[data-budget]"), function (b) { b.addEventListener("click", function () { setBudget(b.dataset.budget); }); });
-    [].forEach.call(document.querySelectorAll("[data-area]"), function (b) { b.addEventListener("click", function () { setArea(b.dataset.area); }); });
+    /* ------------------------------------------------------------------ расширенные настройки */
+    $("districtChips").addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-district]") : null;
+      if (!b) return;
+      state.district = b.dataset.district || "";
+      renderDistrictChips();
+      preview();
+    });
+    $("intentToggles").addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-intent]") : null;
+      if (!b) return;
+      var k = b.dataset.intent, i = state.intents.indexOf(k);
+      if (i < 0) state.intents.push(k); else state.intents.splice(i, 1);
+      renderIntentToggles();
+      preview();
+    });
     [].forEach.call(document.querySelectorAll("[data-klass]"), function (b) {
       b.addEventListener("click", function () {
         state.klass = b.dataset.klass;
-        [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-        render();
+        markKlass();
+        preview();
       });
     });
 
-    $("goBtn").addEventListener("click", function () { $("results").scrollIntoView({ block: "start" }); });
+    /* ------------------------------------------------------------------ кнопка «подобрать» */
+    $("goBtn").addEventListener("click", function () { apply(); });
     $("shareBtn").addEventListener("click", function () {
       syncUrl();
       var label = $("shareLabel"), txt = location.href;
@@ -731,57 +1226,92 @@
     });
     $("printBtn").addEventListener("click", function () { window.print(); });
 
+    /* Словами: «понять запрос» — тоже осознанное действие пользователя, поэтому показываем результат. */
     function runQuery() {
       state.query = $("queryInput").value.trim();
       var q = C.parseQuery(state.query);
       if (q.city) state.city = q.city;
-      if (q.budgetMax) state.budget = clamp(q.budgetMax, 1, 400);
+      if (q.budgetMax) { state.budget = clamp(q.budgetMax, 1, 400); state.budgetRub = Math.round(state.budget * 1000000); }
       if (q.areaMax) state.area = clamp(q.areaMax, 12, 400);
-      $("budgetInput").value = state.budget; $("areaInput").value = state.area;
-      [].forEach.call(document.querySelectorAll("[data-budget],[data-area]"), function (x) {
-        var k = x.dataset.budget != null ? "budget" : "area";
-        x.setAttribute("aria-pressed", String(parseFloat(x.dataset[k]) === state[k]));
-      });
       if (q.klass) state.klass = q.klass;
+      bi.value = rubTxt(state.budgetRub); ai.value = state.area;
       syncCityUI();
-      [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) { x.setAttribute("aria-pressed", String(x.dataset.klass === state.klass)); });
-      render();
-      $("results").scrollIntoView({ block: "start" });
+      renderDistrictChips();
+      renderIntentToggles();
+      markKlass();
+      mark("budget", state.budget); mark("area", state.area);
+      apply();
     }
     $("queryBtn").addEventListener("click", runQuery);
     $("queryInput").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); runQuery(); } });
     $("resetBtn").addEventListener("click", function () {
-      state = { city: state.city, budget: 25, area: 45, klass: "Все", query: "" };
+      state = { city: state.city, budget: 25, budgetRub: 25000000, area: 45, klass: "Все", query: "", district: "", intents: [] };
       $("queryInput").value = "";
+      bi.value = rubTxt(state.budgetRub); ai.value = state.area;
+      V = null;
+      $("results").hidden = true;
+      $("market").hidden = true;
       syncCityUI();
-      [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) { x.setAttribute("aria-pressed", String(x.dataset.klass === "Все")); });
-      render();
+      renderDistrictChips();
+      renderIntentToggles();
+      markKlass();
+      mark("budget", state.budget); mark("area", state.area);
+      preview();
+      window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
     });
     [].forEach.call(document.querySelectorAll("[data-scene]"), function (b) {
       b.addEventListener("click", function () { applyScene(JSON.parse(b.getAttribute("data-scene")), true); });
     });
     bindMood();
+    /* «Выгодное посмотреть» и готовые сценарии — тоже явное действие, поэтому список показываем сразу. */
+
+    /* ------------------------------------------------------------------ рынок («как в Авито») */
+    $("marketBtn").addEventListener("click", showMarket);
+    $("marketSort").addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-sort]") : null;
+      if (!b) return;
+      mktSort = b.dataset.sort;
+      renderMarketSort();
+      renderMarket();
+    });
+    $("marketAll").addEventListener("click", function () { mktAll = !mktAll; renderMarket(); });
+    $("marketClose").addEventListener("click", function () {
+      $("market").hidden = true;
+      window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
+    });
+    $("marketList").addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-save]") : null;
+      if (!b) return;
+      toggleSaved(b.dataset.save);
+      renderMarket();
+    });
+    [].forEach.call(document.querySelectorAll(".nav a[data-open]"), function (a) {
+      a.addEventListener("click", function (e) {
+        e.preventDefault();
+        document.body.classList.remove("mobile-nav-open");
+        $("burger").setAttribute("aria-expanded", "false");
+        if (a.dataset.open === "market") { $("results").hidden = false; showMarket(); }
+      });
+    });
+    renderMarketSort();
+
+    /* ------------------------------------------------------------------ остальное */
     document.addEventListener("click", function (e) {
       var b = e.target && e.target.closest ? e.target.closest(".v-pill.lift") : null;
       if (!b) return;
       if (b.dataset.to) {
-        state.budget = clamp(b.dataset.to, 1, 400);
-        $("budgetInput").value = money(state.budget);
-        [].forEach.call(document.querySelectorAll("[data-budget]"), function (x) {
-          x.setAttribute("aria-pressed", String(parseNum(x.dataset.budget) === state.budget));
-        });
+        state.budgetRub = snapRub(parseInt(b.dataset.to, 10) * 1000000);
+        state.budget = rubToMln(state.budgetRub);
+        bi.value = rubTxt(state.budgetRub);
+        mark("budget", state.budget);
       }
       if (b.dataset.areaTo) {
         state.area = clamp(b.dataset.areaTo, 12, 400);
-        $("areaInput").value = state.area;
-        [].forEach.call(document.querySelectorAll("[data-area]"), function (x) {
-          x.setAttribute("aria-pressed", String(parseNum(x.dataset.area) === state.area));
-        });
+        ai.value = state.area;
+        mark("area", state.area);
       }
-      render();
-      $("results").scrollIntoView({ block: "nearest" });
+      apply(false);
     });
-
     $("cityDDBtn").addEventListener("click", function () { cityMenu($("cityDD").dataset.open !== "true"); });
     document.addEventListener("click", function (e) { if (!$("cityDD").contains(e.target)) cityMenu(false); });
     document.addEventListener("keydown", function (e) { if (e.key === "Escape") cityMenu(false); });
@@ -802,7 +1332,7 @@
     $("compareBtn").addEventListener("click", function () {
       if (saved.length < 2) { $("leadMsg").textContent = "Для сравнения добавьте в подборку минимум 2 ЖК — кнопка «В подборку» на карточке."; $("results").scrollIntoView({ block: "start" }); return; }
       var rows = DATA.filter(function (z) { return saved.indexOf(z.name) >= 0; });
-      var txt = "Сравнение ЖК (" + state.city + ")\n\n" + rows.map(function (z) {
+      var txt = "Сравнение ЖК (" + (V ? V.city : state.city) + ")\n\n" + rows.map(function (z) {
         return [z.name, z.zhkClass, "от " + num(z.pricePerM2) + " ₽/м²", "вход " + mln(z.minLotMln), "лотов: " + (z.offers || "н/д"), z.delivery].join(" · ");
       }).join("\n");
       $("compareOut").textContent = txt;
@@ -818,8 +1348,9 @@
       e.preventDefault();
       var n = $("leadName").value.trim(), c = $("leadContact").value.trim();
       if (!n || !c) { $("leadMsg").textContent = "Заполните имя и контакт — как в реальной форме с валидацией."; return; }
+      var view = V || state;
       var list = (last ? last.top : []).map(function (r) { return r.zhk.name + " (" + mln(r.cost) + ")"; }).join("; ");
-      $("leadMsg").textContent = "Спасибо, " + n + "! Подборка «" + state.city + " · " + money(state.budget) + " млн · " + state.area +
+      $("leadMsg").textContent = "Спасибо, " + n + "! Подборка «" + view.city + " · " + rubTxt(view.budgetRub || view.budget * 1e6) + " ₽ · " + view.area +
         " м²» " + (list ? " — " + list : "") + " — готова к отправке на " + c + ". (Демо: бэкенда нет, письмо не уходит.)";
       $("leadForm").reset();
     });
@@ -832,12 +1363,15 @@
   function boot() {
     if (!DATA.length || !C || !C.match) { fatal(); return; }
     buildCityUI();
-    readUrl();
+    readUrl();                       /* параметры ссылки важнее дефолтов, поэтому читаем до рендера чипов */
+    renderDistrictChips();
+    renderIntentToggles();
     syncCityUI();
+    markKlass();
     bind();
-    [].forEach.call(document.querySelectorAll("[data-klass]"), function (x) { x.setAttribute("aria-pressed", String(x.dataset.klass === state.klass)); });
+    watchArtBox();
     $("compareBtn").textContent = saved.length ? "Сравнить " + saved.length + " ЖК" : "Сравнить 0 ЖК";
-    render();
+    if (deepLinked) apply(false); else preview();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

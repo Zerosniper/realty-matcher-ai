@@ -30,27 +30,42 @@ with sync_playwright() as p:
     print("02 ok")
 
     # 3. Екатеринбург · 16 млн · 60 м² + запрос словами + раскрытая таблица (вся страница)
+    page.click("#adv"); page.wait_for_timeout(250)      # поле «словами» живёт под <details>
     page.fill("#queryInput", "2 комнаты в екатеринбурге до 16 млн")
     page.click('button[data-scene]:has-text("Екатеринбург · 16 млн")')
     page.wait_for_timeout(300)
+    page.click("#queryBtn"); page.wait_for_timeout(300)
+    page.click("#goBtn"); page.wait_for_timeout(500)     # результат — только по кнопке
     page.click("#toggleTableBtn")
     page.wait_for_timeout(250)
     page.screenshot(path=OUT + "03_ekaterinburg_16mln_60m2_table.png", full_page=True)
     print("03 ok")
 
     # 4. Проверка честности: «Премиум в ЦАО · 140 млн · 85 м²» -> пустое состояние
+    page.goto(BASE, wait_until="networkidle"); page.wait_for_timeout(400)
     page.click('button[data-scene]:has-text("Премиум в ЦАО")')
-    page.wait_for_timeout(300)
+    page.wait_for_timeout(400)
     page.evaluate("window.scrollTo(0, document.getElementById('results').offsetTop - 60)")
     page.wait_for_timeout(200)
     page.screenshot(path=OUT + "04_premium_tceo_empty_state.png")
     print("04 ok")
 
+    # 4b. Карточка ЖК: нарисованная аналитика вместо фото (лоты, срок сдачи, полоска бюджета)
+    page.goto(BASE, wait_until="networkidle"); page.wait_for_timeout(400)
+    page.click("#goBtn"); page.wait_for_timeout(700)
+    page.locator("#topCards .card").first.screenshot(path=OUT + "09_card_analytics.png")
+    print("09 ok")
+
+    # 4c. Список-витрина «Все новостройки города» (карточка как на маркетплейсе)
+    page.click("#marketBtn"); page.wait_for_timeout(700)
+    page.evaluate("window.scrollTo(0, document.getElementById('market').offsetTop - 10)")
+    page.wait_for_timeout(400)
+    page.screenshot(path=OUT + "10_market_list.png")
+    print("10 ok")
+
     # 7. Шаг 1 «куда смотрим»: плитки городов + настроение города (акцент перекрашивается под Москву)
     page.goto(BASE, wait_until="networkidle")
     page.wait_for_timeout(450)
-    page.click('button[data-scene]:has-text("Москва · 30 млн")')
-    page.wait_for_timeout(400)
     page.click('.city-card[data-city="Сочи"]')          # показываем смену города и перекраску акцента
     page.wait_for_timeout(450)
     page.click('.city-card[data-city="Москва"]')
@@ -58,12 +73,14 @@ with sync_playwright() as p:
     shot_finder(page, OUT + "07_finder_city_step.png")
     print("07 ok")
 
-    # 8. Мобильная панель подбора: плитки городов, поля сумм и готовые диапазоны
+    # 8. Мобильная панель подбора: плитки городов, рубли, готовые диапазоны и раскрытые «расширенные»
     mm = browser.new_page(viewport={"width": 390, "height": 1200}, device_scale_factor=2)
     mm.goto(BASE, wait_until="networkidle")
     mm.wait_for_timeout(600)
     shot_finder(mm, OUT + "08_mobile_finder.png")
-    print("08 ok")
+    mm.click("#adv"); mm.wait_for_timeout(400)
+    shot_finder(mm, OUT + "11_mobile_advanced.png")
+    print("08/11 ok")
 
     # 5. Мобильная версия
     m = browser.new_page(viewport={"width": 390, "height": 844}, device_scale_factor=2)

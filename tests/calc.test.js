@@ -184,4 +184,34 @@ test("«у метро» находит ЖК, где источник пишет 
   assert.ok(Number.isFinite(none.marketMin) && Number.isFinite(none.marketMax), "без выборки — ноль, а не Infinity");
 });
 
+test("район из расширенных настроек сужает выборку честно", () => {
+  const ekb = CALC.districts(DATA, "Екатеринбург");
+  assert.ok(ekb.length >= 3, "районы берутся из поля «Район»: " + ekb.join(" / "));
+  const target = ekb[0];
+  const res = CALC.match(DATA, { city: "Екатеринбург", budgetMln: 40, areaM2: 60, district: target, query: {} });
+  const manual = DATA.filter((z) => z.city === "Екатеринбург" && z.district.toLowerCase().includes(target.toLowerCase()));
+  assert.ok(res.cityCount === manual.length && res.cityCount > 0, `район «${target}»: ${res.cityCount} ЖК, в данных ${manual.length}`);
+  assert.ok(res.cityCountAll === 5 && res.cityCount < res.cityCountAll, "фильтр виден в счётчиках: было 5, стало меньше");
+  const none = CALC.match(DATA, { city: "Екатеринбург", budgetMln: 40, areaM2: 60, district: "Академический", query: {} });
+  assert.strictEqual(none.cityCount, 0, "района, которого нет в срезе, не должно быть в выдаче");
+  assert.ok(/Академический/.test(none.emptyReason), "причина названа словом: " + none.emptyReason);
+  const both = CALC.match(DATA, { city: "Москва", budgetMln: 40, areaM2: 60, klass: "Бизнес", district: "Академический", query: {} });
+  assert.ok(/класса «Бизнес»/.test(both.emptyReason) && /районе/.test(both.emptyReason), "два фильтра — две причины в одном тексте: " + both.emptyReason);
+});
+
+test("чип расширенных настроек = то же слово в запросе", () => {
+  assert.ok(Array.isArray(CALC.INTENTS) && CALC.INTENTS.length >= 5, "список чипов живёт в calc.js");
+  CALC.INTENTS.forEach(({ key, label }) => {
+    const chip = CALC.match(DATA, { city: "Сочи", budgetMln: 50, areaM2: 60, query: { intents: [key] } });
+    const word = CALC.match(DATA, { city: "Сочи", budgetMln: 50, areaM2: 60, query: CALC.parseQuery(label) });
+    assert.deepStrictEqual(word.query.intents, [key], `подпись «${label}» должна давать ровно интент ${key}`);
+    assert.strictEqual(chip.cityCount, word.cityCount, `чип и слово расходятся: ${key}`);
+    const sochi = DATA.filter((z) => z.city === "Сочи" && CALC.intentHit(z, key)).length;
+    assert.strictEqual(chip.cityCount, sochi, `intentHit(${key}) разошёлся с фильтром match()`);
+  });
+  assert.ok(CALC.intentHit(byName("Кислород"), "sea"), "«Кислород» — у моря");
+  assert.ok(!CALC.intentHit(byName("Плеханова 11"), "sea"), "«Плеханова 11» — не у моря, выдумывать не будем");
+  assert.ok(CALC.intentHit(byName("Парк Столиц"), "park"), "«Парк Столиц» — у парка");
+});
+
 console.log("\n" + (process.exitCode ? "ЕСТЬ ПРОВАЛЫ" : "все проверки пройдены") + " · " + n + " тестов\n");

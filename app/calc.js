@@ -140,6 +140,18 @@
     business: /бизнес/i
   };
 
+  /* Ключи, которые можно показать пользователю как готовые «галочки» в расширенных настройках.
+     Предикатор тот же, что в разборе словесного запроса, — чип «у метро» и слово «метро» в поле
+     дают одинаковый фильтр, поэтому расхождение между ними невозможно. */
+  var INTENTS = [
+    { key: "metro",  label: "у метро",             hint: "в карточке источника указано время пешком до станции" },
+    { key: "park",   label: "у парка или сквера",   hint: "парк, лес, зелёный двор в описании объекта" },
+    { key: "sea",    label: "у моря или воды",      hint: "море, набережная, первая линия, река" },
+    { key: "school", label: "школа и детсад",       hint: "своя школа или детский сад в проекте" },
+    { key: "done",   label: "только сданные",       hint: "в сроке сдачи есть слово «сдан»" },
+    { key: "soon",   label: "сдача в 2026",         hint: "в описании фигурирует 2026 год" }
+  ];
+
   /**
    * Разбор свободного запроса («студия у моря до 20 млн в Сочи»).
    * Это правила + словарь, а не «магия»: каждый извлечённый критерий возвращается
@@ -186,6 +198,27 @@
 
   function textOf(z) { return [z.district, z.feature, z.developer, z.name, z.delivery].join(" ").toLowerCase(); }
 
+  /** Проверка одного намерения по одной карточке — общая для чипов и для словесного запроса. */
+  function intentHit(zhk, key) {
+    var k = String(key || "");
+    if (k === "done") return /сдан/.test(String(zhk.delivery || "").toLowerCase());
+    // классы и комнатность — не про текст карточки: их фильтруют klass и rooms
+    if (k === "premium" || k === "business" || k === "finishing") return true;
+    if (k === "studio" || k === "one" || k === "two" || k === "three") return true;
+    return INTENT_MAP[k] ? INTENT_MAP[k].test(textOf(zhk)) : true;
+  }
+
+  /** Уникальные районы города — ровно те, что написаны в поле «Район» карточки источника. */
+  function districts(data, city) {
+    var out = [];
+    (data || []).forEach(function (z) {
+      if (z.city !== city) return;
+      var d = String(z.district || "").split(",")[0].trim();
+      if (d && out.indexOf(d) < 0) out.push(d);
+    });
+    return out.sort();
+  }
+
   /** Основной API: подобрать N вариантов в городе. */
   function match(data, params) {
     var opts = params.opts || {};
@@ -194,27 +227,21 @@
     var city = data.filter(function (z) { return z.city === params.city; });
     var cityCountAll = city.length;
     if (params.klass && params.klass !== "Все") city = city.filter(function (z) { return z.zhkClass === params.klass; });
+    if (params.district) {
+      var dn = String(params.district).toLowerCase();
+      city = city.filter(function (z) { return String(z.district || "").toLowerCase().indexOf(dn) >= 0; });
+    }
     if (!city.length) {
       return { city: params.city, params: params, query: q, all: [], top: [], rest: [], fittingCount: 0,
         cityCount: 0, cheapest: null, capMln: params.budgetMln, queryCapApplied: false,
-        emptyReason: params.klass && params.klass !== "Все"
-          ? "в базе нет ЖК класса «" + params.klass + "» в этом городе" : "город не найден",
+        emptyReason: ((params.klass && params.klass !== "Все" ? "в базе нет ЖК класса «" + params.klass + "» в этом городе" : "") +
+          (params.district ? "нет ЖК в районе «" + params.district + "»" : "")).replace(" в этом городенет", " в этом городе и нет") || "город не найден",
         marketMin: 0, marketMax: 0, maxAffordablePpm: Math.floor(params.budgetMln * 1e6 / params.areaM2) };
     }
     if (q.intents && q.intents.length) {
-      city = city.filter(function (z) {
-        var txt = textOf(z);
-        return q.intents.every(function (k) {
-          if (k === "finishing") return true;
-          // «студия / 1-комн / 2-комн / 3-комн» — это про лоты, а не про текст карточки ЖК:
-          // их обрабатывает фильтр по rooms, здесь их делать нечего (иначе ЖК исчезал из выдачи).
-          if (k === "studio" || k === "one" || k === "two" || k === "three") return true;
-          if (k === "done") return /сдан/.test((z.delivery || "").toLowerCase());
-          if (k === "premium" || k === "business") return true;
-          if (INTENT_MAP[k]) return INTENT_MAP[k].test(txt);
-          return true;
-        });
-      });
+      // «студия / 1-комн / …» и классы — это не про текст карточки: их обрабатывают rooms и klass,
+      // поэтому intentHit для них возвращает true (иначе ЖК исчезал из выдачи).
+      city = city.filter(function (z) { return q.intents.every(function (k) { return intentHit(z, k); }); });
     }
     if (q.rooms != null) {
       var need = q.rooms === 0 ? 20 : q.rooms * 22;
@@ -277,7 +304,8 @@
   }
 
   return {
-    WEIGHTS: WEIGHTS, match: match, evaluate: evaluate, estimate: estimate, parseQuery: parseQuery,
+    WEIGHTS: WEIGHTS, INTENTS: INTENTS, intentHit: intentHit, districts: districts,
+    match: match, evaluate: evaluate, estimate: estimate, parseQuery: parseQuery,
     mortgage: mortgage, budgetVerdict: budgetVerdict, pickLotGroup: pickLotGroup,
     minAvailableArea: minAvailableArea, fmtNum: fmtNum, mlnTxt: mlnTxt
   };

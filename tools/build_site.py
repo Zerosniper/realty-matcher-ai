@@ -368,6 +368,125 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
 .legal{font-size:11.5px;max-width:96ch}
 
 /* ---------- адаптива ---------- */
+[hidden]{display:none!important}
+/* ---------- бюджет полными рублями ---------- */
+.amount.rub{display:flex;align-items:flex-end;gap:9px;padding:1px 0 0}
+.amount.rub input{flex:1;min-width:0;border:0;border-bottom:2px solid var(--line);background:none;padding:2px 0;
+  font-family:var(--font-display);font-size:29px;font-weight:700;letter-spacing:-.015em;color:var(--text);
+  font-variant-numeric:tabular-nums;transition:border-color .3s ease}
+.amount.rub input:focus{outline:none;border-bottom-color:var(--city-accent)}
+.amount.rub .unit{font-family:var(--font-display);font-size:21px;font-weight:700;color:var(--text-muted);padding-bottom:2px}
+.rub-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rub-row .nudge{width:auto;padding:0 10px;font-size:12px;font-variant-numeric:tabular-nums}
+.rub-echo{margin-left:auto;font-size:12.6px;font-weight:800;color:var(--city-accent);font-variant-numeric:tabular-nums;transition:color .45s ease}
+.chips.presets .chip small{display:block;font-size:10.4px;font-weight:600;color:var(--text-muted);letter-spacing:.01em}
+.chips.presets .chip[aria-pressed="true"] small{color:rgba(255,255,255,.82)}
+/* ---------- расширенные настройки ---------- */
+.adv{border:1px dashed #cdd8ea;border-radius:var(--radius);background:#fbfcfe}
+.adv>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:12px 15px;
+  font-size:13.2px;font-weight:700;color:var(--brand-blue-dark)}
+.adv>summary::-webkit-details-marker{display:none}
+.adv>summary .chev{margin-left:auto;flex:none;transition:transform .25s ease}
+.adv[open]>summary .chev{transform:rotate(180deg)}
+.adv>summary small{font-weight:600;color:var(--text-muted);font-size:12px}
+.adv-body{display:grid;gap:14px;padding:3px 15px 15px;border-top:1px solid #e6ecf6}
+.adv-row{display:grid;gap:8px}
+.adv-row>b{font-size:11.2px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-secondary);font-weight:800}
+.toggles .chip{display:inline-flex;align-items:center;gap:7px}
+.toggles .chip i{width:14px;height:14px;border-radius:5px;border:1.6px solid #c3cfe3;flex:none;transition:.2s ease}
+.toggles .chip[aria-pressed="true"]{background:var(--city-accent);border-color:transparent;color:#fff}
+.toggles .chip[aria-pressed="true"] i{background:#fff;border-color:#fff;box-shadow:inset 0 0 0 2.4px var(--city-accent)}
+.toggles .chip .n{font-variant-numeric:tabular-nums;opacity:.72;font-size:11.2px;margin-left:6px}
+.adv .nl-in{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:8px;align-items:center}
+.adv .nl-in label{grid-column:1/-1}
+.adv .nl-in input{min-width:0}
+.adv .intent{grid-column:1/-1}
+/* ---------- кнопка с числом подходящих ---------- */
+.cta-bar .btn-go b{display:inline-flex;align-items:center;justify-content:center;min-width:23px;height:20px;padding:0 6px;
+  border-radius:999px;background:var(--city-accent);color:#fff;font-size:12.4px;font-variant-numeric:tabular-nums;transition:background .4s ease}
+.cta-bar.is-dirty .btn-go{animation:pulseGo 1.6s ease-in-out infinite}
+@keyframes pulseGo{0%,100%{box-shadow:0 0 0 0 rgba(23,102,224,.4)}50%{box-shadow:0 0 0 8px rgba(23,102,224,0)}}
+.cta-hint{margin:9px 2px 0;font-size:12.3px;color:#8a5a00;display:flex;align-items:center;gap:7px}
+/* ---------- аналитическая графика вместо фото ---------- */
+.card-art{position:relative;width:100%;height:152px;overflow:hidden;background:
+  radial-gradient(130% 100% at 14% -10%,rgba(255,255,255,.16),transparent 62%),linear-gradient(150deg,#16294a,#0c1b33 64%,#102640)}
+.card-art svg{position:absolute;inset:0;width:100%;height:100%}
+.card--excluded .card-art{filter:saturate(.32) brightness(.95)}
+.city-art{position:absolute;top:9px;right:10px;width:44%;height:34px;opacity:.5;transition:opacity .45s ease,transform .45s ease}
+.city-art svg{width:100%;height:100%;display:block}
+.city-card[aria-selected="true"] .city-art{opacity:.85;transform:translateY(-1px)}
+@keyframes barUp{from{transform:scaleY(.05)}to{transform:scaleY(1)}}
+@keyframes dashIn{from{stroke-dashoffset:var(--len,600)}to{stroke-dashoffset:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+@keyframes barX{from{transform:scaleX(.02)}to{transform:scaleX(1)}}
+.card-art text,.mk-art text{font-family:var(--font-ui);font-weight:700}
+/* Колонка графики в товарной карточке: масштаб подписей считается в JS под её
+   реальную ширину (artMini -> artBox), здесь только вес и трекинг. */
+.mk-art text{letter-spacing:0}
+.a-lbl{font-size:11px;fill:#dbe7f8}.a-val{font-size:10.4px;fill:#cddcf2}.a-note{font-size:9.4px;fill:#8ea7cd}
+.card-art .a-cap,.mk-art .a-cap{font-size:8.5px;fill:#8ea7cd;letter-spacing:.07em}
+.hero-art .h-name{font-size:10.6px;fill:#dbe7f8;font-weight:700}
+.hero-art .h-num{font-size:10.4px;fill:#9fb6da;font-weight:700}
+.a-bar{transform-box:fill-box;transform-origin:50% 100%;animation:barUp .85s cubic-bezier(.2,.8,.2,1) both}
+.a-barx{transform-box:fill-box;transform-origin:0 50%;animation:barX .9s cubic-bezier(.2,.8,.2,1) both}
+.city-art{color:var(--cc)}
+.a-line{stroke-dasharray:var(--len,600);animation:dashIn 1.15s ease-out both}
+.a-fade{animation:fadeUp .7s ease-out both}
+/* ---------- герой: панель аналитики города ---------- */
+.hero-side{display:grid;gap:14px;align-content:start}
+.hero-art{border:1px solid rgba(255,255,255,.16);border-radius:var(--radius);background:rgba(9,20,40,.5);
+  padding:15px 17px 13px;backdrop-filter:blur(6px)}
+.hero-art h3{margin:0;font-family:var(--font-display);font-size:15.5px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.hero-art h3 span{font-size:12px;font-weight:600;color:#a9bddd}
+.hero-art svg{width:100%;height:auto;display:block;margin-top:9px}
+.hero-art .ha-legend{display:flex;flex-wrap:wrap;gap:11px;margin-top:8px;font-size:11.2px;color:#c3d2ec}
+.hero-art .ha-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* ---------- список «как в Авито» ---------- */
+.market{max-width:var(--maxw);margin:0 auto;padding:24px 22px 6px;scroll-margin-top:84px}
+.market-head{display:grid;gap:9px;margin-bottom:14px}
+.market-head .mh-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.market-head h2{margin:0;font-family:var(--font-display);font-size:21px;letter-spacing:-.01em}
+.market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
+@media (max-width:770px){.market-grid{grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr))}}
+.mk-card{display:grid;grid-template-columns:158px minmax(0,1fr);border:1px solid var(--line);border-radius:16px;background:#fff;
+  overflow:hidden;transition:box-shadow .22s ease,transform .22s ease,border-color .3s ease}
+.mk-card:hover{box-shadow:var(--shadow);transform:translateY(-2px);border-color:#c9d8f2}
+.mk-card.is-fit{border-color:#bfe4d5;box-shadow:inset 3px 0 0 var(--ok,#0f8f6c)}
+.mk-art{position:relative;min-height:242px;display:flex;flex-direction:column;background:linear-gradient(150deg,#16294a,#102640)}
+/* viewBox = фактическая ширина колонки (artBox), поэтому 1 единица = 1 CSS-пиксель */
+.mk-art svg{width:100%;height:auto;display:block}
+.mk-meter{margin:auto 10px 11px;padding:10px 0 0;border-top:1px solid rgba(255,255,255,.14);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 6px;align-items:baseline;
+  font-family:var(--font-ui);font-weight:700}
+.mk-meter .mlab{font-size:9.4px;letter-spacing:.04em;color:#8ea7cd}
+.mk-meter .mval{font-size:13px;color:#fff;font-variant-numeric:tabular-nums;text-align:right}
+.mk-meter .mk-track{grid-column:1/-1;position:relative;height:4px;border-radius:99px;background:rgba(255,255,255,.18);margin:4px 0 2px}
+.mk-meter .mk-dot{position:absolute;top:50%;width:9px;height:9px;border-radius:50%;background:#fff;
+  transform:translate(-50%,-50%);box-shadow:0 0 0 3px rgba(74,214,174,.35)}
+.mk-meter .mmin{font-size:10px;color:#8ea7cd}
+.mk-meter .mmax{font-size:10px;color:#8ea7cd;justify-self:end}
+.mk-meter small{grid-column:1/-1;font-size:9.6px;font-weight:600;color:#7d97c0;line-height:1.35}
+.mk-body{padding:12px 14px 13px;display:grid;gap:7px;align-content:start;min-width:0}
+.mk-name{margin:0;font-family:var(--font-display);font-size:15.5px;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap}
+.mk-name em{font-style:normal;font-size:10.6px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--text-muted)}
+.mk-price{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--brand-blue-dark);font-variant-numeric:tabular-nums}
+.mk-ppm{font-size:11.8px;color:var(--text-muted);font-weight:600}
+.mk-facts{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.mk-facts li{font-size:11.2px;border:1px solid var(--line);border-radius:8px;padding:3px 7px;color:var(--text-secondary);background:#fbfcfe}
+.mk-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:1px}
+@media (max-width:770px){.mk-card{grid-template-columns:minmax(0,1fr)}.mk-meter{display:none}}
+.mk-foot a,.mk-foot button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px;font-size:12.2px;
+  font-weight:700;cursor:pointer;color:var(--brand-blue-dark);text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
+.market-note{font-size:12.2px;color:var(--text-muted)}
+.btn-market{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 14px;font-weight:800;font-size:13.4px;
+  cursor:pointer;color:var(--brand-blue-dark);display:inline-flex;align-items:center;gap:8px;min-height:44px}
+.btn-market:hover{background:#f3f8ff;border-color:#c4d9fa}
+.btn-market b{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:999px;
+  background:var(--city-accent);color:#fff;font-size:12px;font-variant-numeric:tabular-nums}
+.mk-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 2px;padding:13px 15px;border-radius:16px;
+  border:1px solid var(--line);background:linear-gradient(135deg,#f7faff,#eef4ff)}
+.mk-cta p{margin:0;font-size:12.6px;color:var(--text-secondary);max-width:62ch}
+
 @media (max-width:1180px){
   .nav{display:none}.burger{display:grid}
   .fields{grid-template-columns:1fr 1fr}
@@ -379,7 +498,9 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
   .city-photo{opacity:.1}
   .step-duo{grid-template-columns:minmax(0,1fr)}
   .field-top{white-space:normal}
-  .amount.big input{font-size:29px}
+  .amount.big input,.amount.rub input{font-size:26px}
+  .adv .nl-in{grid-template-columns:minmax(0,1fr) auto}
+  .chips.presets .chip{font-size:11.6px;padding:7px 8px}
   .cta-bar .btn-go{margin-left:0;width:100%;justify-content:center}
   .cta-bar .btn-ghost-light{flex:1 1 44%}
   .field-cta{grid-column:span 2;min-height:0;flex-direction:row;justify-content:space-between;align-items:center;flex-wrap:wrap;text-align:left}
@@ -419,8 +540,10 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
   td.num{white-space:normal}
   tr[data-fits] td:first-child{box-shadow:none}
 }
-@media (prefers-reduced-motion:reduce){.mood.in,.finder.city-switch .step,.hero-photo.on{animation:none}.city-card,.city-photo,.hero-photo,.nudge{transition:none}}
-@media print{.topbar,.finder-wrap,.hero-bg,.lead,.burger{display:none}.card,.verdict,.block .inner{box-shadow:none}}
+@media (prefers-reduced-motion:reduce){.mood.in,.finder.city-switch .step{animation:none}
+  .a-bar,.a-line,.a-fade,.cta-bar.is-dirty .btn-go{animation:none}
+  .city-card,.city-art,.city-photo,.nudge,.mk-card{transition:none}}
+@media print{.topbar,.finder-wrap,.hero-bg,.lead,.burger,.market,.mk-cta{display:none}.card,.verdict,.block .inner{box-shadow:none}}
 """
 
 BODY = r"""
@@ -444,7 +567,7 @@ BODY = r"""
         <a href="#results">Ваши ЖК</a>
         <a href="#sheet">Сравнение городов</a>
         <a href="#chart">График цен</a>
-        <a href="#catalog">Все ЖК</a>
+        <a href="#market" data-open="market">Все новостройки</a>
       </nav>
       <div class="topbar-right">
         <span class="stamp"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-check"/></svg> Цены сверены с источниками 15-16.11.2026</span>
@@ -455,8 +578,6 @@ BODY = r"""
 
   <section class="hero">
     <div class="hero-bg" aria-hidden="true">
-      <div class="hero-photo on" id="heroPhotoA"></div>
-      <div class="hero-photo" id="heroPhotoB"></div>
       <div class="hero-veil"></div>
     </div>
     <div class="hero-inner">
@@ -472,11 +593,14 @@ BODY = r"""
           <span><svg class="ic ic--in" aria-hidden="true"><use href="#i-share"/></svg> Подбор копируется ссылкой и собирается в сравнение</span>
         </div>
       </div>
-      <aside class="steps" aria-label="Как пользоваться сервисом">
-        <p class="steps-title">Как это работает — 3 шага</p>
-        <div class="step-row"><span class="step-num" aria-hidden="true">1</span><p>Выберите <b>город</b>: Сочи, Москва или Екатеринбург</p></div>
-        <div class="step-row"><span class="step-num" aria-hidden="true">2</span><p>Укажите <b>бюджет</b> и <b>площадь</b> — или напишите словами: «студия у моря до 20 млн»</p></div>
-        <div class="step-row"><span class="step-num" aria-hidden="true">3</span><p>Сравните <b>до 3 вариантов</b> с фото домов: цена входа, остаток бюджета, ипотека и ссылка на карточку застройщика</p></div>
+      <aside class="hero-side">
+        <div class="hero-art" id="heroArt" aria-live="polite"></div>
+        <div class="steps" aria-label="Как пользоваться сервисом">
+          <p class="steps-title">Как это работает — 3 шага</p>
+          <div class="step-row"><span class="step-num" aria-hidden="true">1</span><p>Выберите <b>город</b> — карточка подсветится, рядом появится короткая сводка. Никуда не перематывает.</p></div>
+          <div class="step-row"><span class="step-num" aria-hidden="true">2</span><p>Впишите <b>бюджет полными рублями</b> (15 000 000) или нажмите готовую кнопку — и укажите <b>метраж</b>.</p></div>
+          <div class="step-row"><span class="step-num" aria-hidden="true">3</span><p>Нажмите <b>«Подобрать новостройку»</b>: покажем до 3 вариантов с аналитикой цен, сроками сдачи и ссылкой на карточку застройщика.</p></div>
+        </div>
       </aside>
     </div>
   </section>
@@ -485,8 +609,8 @@ BODY = r"""
     <section class="finder" id="finder" aria-labelledby="finderTitle">
       <div class="finder-head">
         <h2 id="finderTitle"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg> Скажите, на что вы рассчитываете</h2>
-        <p>Три шага: куда смотрим → сколько готовы потратить → какой метраж. Сумму можно вписать точной,
-          а можно взять готовой кнопкой — подбор под панелью пересчитается сразу.</p>
+        <p>Три шага: город → бюджет → метраж. Всё по желанию уточняется ниже. Ничего само не перескакивает
+          и никуда не уводит: список вариантов покажет кнопка «Подобрать новостройку».</p>
       </div>
 
       <div class="steps-flow">
@@ -508,14 +632,17 @@ BODY = r"""
         <div class="step-duo">
           <section class="step">
             <div class="field-top">
-              <span class="step-tag"><i aria-hidden="true">2</i>Бюджет на покупку</span>
+              <span class="step-tag"><i aria-hidden="true">2</i>Сколько готовы потратить</span>
               <span class="field-hint" id="budgetPctHint"></span>
             </div>
-            <div class="amount big">
-              <button class="nudge" type="button" id="budgetLess" aria-label="Уменьшить бюджет на 5 млн">−</button>
-              <input type="text" id="budgetInput" class="typed" inputmode="decimal" value="25" autocomplete="off" spellcheck="false" aria-label="Бюджет, миллионов рублей" />
-              <span class="unit" aria-hidden="true">млн ₽</span>
-              <button class="nudge" type="button" id="budgetMore" aria-label="Увеличить бюджет на 5 млн">+</button>
+            <div class="amount rub">
+              <input type="text" id="budgetRub" class="typed" inputmode="numeric" value="25 000 000" autocomplete="off" spellcheck="false" aria-label="Бюджет в рублях" />
+              <span class="unit" aria-hidden="true">₽</span>
+            </div>
+            <div class="rub-row">
+              <button class="nudge" type="button" id="budgetLess" aria-label="Уменьшить бюджет на 500 тысяч рублей">− 500 000</button>
+              <button class="nudge" type="button" id="budgetMore" aria-label="Увеличить бюджет на 500 тысяч рублей">+ 500 000</button>
+              <span class="rub-echo" id="budgetEcho">= 25 млн ₽</span>
             </div>
             <div class="chips presets" role="group" aria-label="Быстрый выбор бюджета" id="budgetPresets"></div>
             <p class="field-note" id="budgetTypeHint"></p>
@@ -536,31 +663,56 @@ BODY = r"""
         </div>
       </div>
 
-      <div class="cta-bar">
-        <span class="cta-count"><span class="big" id="ctaCount">Подобрано 3 ЖК</span><br /><span class="small" id="ctaNote">цена входа, остаток, ипотека</span></span>
-        <button class="btn-go" type="button" id="goBtn">Показать варианты <svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-chev"/></svg></button>
+      <details class="adv" id="adv">
+        <summary><svg class="ic" aria-hidden="true"><use href="#i-sliders"/></svg> Уточнить, если хочется
+          <small>район · что важно рядом · класс · словами</small>
+          <svg class="ic chev" aria-hidden="true"><use href="#i-chev"/></svg>
+        </summary>
+        <div class="adv-body">
+          <div class="adv-row">
+            <b>Район</b>
+            <span class="chips" role="group" aria-label="Район" id="districtChips"></span>
+            <p class="field-note" id="districtNote"></p>
+          </div>
+          <div class="adv-row">
+            <b>Что важно рядом</b>
+            <span class="chips toggles" role="group" aria-label="Что важно рядом" id="intentToggles"></span>
+            <p class="field-note">Галочка ищет ровно то же, что и слово в запросе: «у метро» находит ЖК, где в карточке
+              источника указано время пешком до станции. Если признака в карточке нет — комплекс просто не попадёт
+              в список, придумывать мы не будем.</p>
+          </div>
+          <div class="adv-row">
+            <b>Класс ЖК</b>
+            <span class="chips" role="group" aria-label="Фильтр по классу">
+              <button class="chip" type="button" data-klass="Все" aria-pressed="true">все</button>
+              <button class="chip" type="button" data-klass="Бизнес" aria-pressed="false">бизнес</button>
+              <button class="chip" type="button" data-klass="Премиум" aria-pressed="false">премиум</button>
+            </span>
+            <p class="field-note">Класс в базе взят из поля «Класс ЖК» карточки источника — 15 из 15, не наша догадка.</p>
+          </div>
+          <div class="adv-row nl-in">
+            <label for="queryInput"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> Можно словами</label>
+            <input type="search" id="queryInput" placeholder="например: студия у моря до 20 млн в Сочи" aria-describedby="intentChips" />
+            <button class="btn-query" type="button" id="queryBtn">Понять запрос</button>
+            <div class="intent" id="intentChips" aria-live="polite"></div>
+          </div>
+        </div>
+      </details>
+
+      <div class="cta-bar" id="ctaBar">
+        <span class="cta-count"><span class="big" id="ctaCount">Есть подходящие варианты: 0</span><br />
+          <span class="small" id="ctaNote">Сочи · 25 000 000 ₽ · 45 м²</span></span>
+        <button class="btn-go" type="button" id="goBtn"><span id="goLabel">Подобрать новостройку</span> <b id="goCount">0</b></button>
         <button class="btn-ghost-light" type="button" id="shareBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-link"/></svg> <span id="shareLabel">Скопировать ссылку</span></button>
         <button class="btn-ghost-light" type="button" id="printBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-scale"/></svg> На печать / в PDF</button>
       </div>
-
-      <div class="nl">
-        <label for="queryInput"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> Можно словами</label>
-        <input type="search" id="queryInput" placeholder="например: студия у моря до 20 млн в Сочи" aria-describedby="intentChips" />
-        <button class="btn-query" type="button" id="queryBtn">Понять запрос</button>
-        <button class="chip" type="button" id="resetBtn">Сбросить</button>
-        <div class="intent" id="intentChips" aria-live="polite"></div>
-      </div>
+      <p class="cta-hint" id="ctaHint" hidden><svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-warn"/></svg> Параметры изменились — нажмите «Подобрать новостройку», чтобы обновить список.</p>
 
       <div class="classbar">
-        <b>Класс ЖК:</b>
-        <span class="chips" role="group" aria-label="Фильтр по классу">
-          <button class="chip" type="button" data-klass="Все" aria-pressed="true">все</button>
-          <button class="chip" type="button" data-klass="Бизнес" aria-pressed="false">бизнес</button>
-          <button class="chip" type="button" data-klass="Премиум" aria-pressed="false">премиум</button>
-        </span>
-        <span class="field-note" style="margin:0">Класс в базе взят из поля «Класс ЖК» карточки источника — не наша догадка</span>
+        <b>Сохранённое:</b>
         <button class="chip grow" type="button" id="compareBtn">Сравнить 0 ЖК</button>
         <button class="chip" type="button" id="copyCompare" hidden>Скопировать сравнение</button>
+        <button class="chip" type="button" id="resetBtn">Сбросить всё</button>
         <pre class="compare-out" id="compareOut" hidden></pre>
       </div>
 
@@ -574,7 +726,7 @@ BODY = r"""
     </section>
   </div>
 
-  <main class="results" id="results">
+  <main class="results" id="results" hidden>
     <section class="verdict" id="verdict" aria-live="polite"></section>
 
     <div class="cards-head">
@@ -587,7 +739,29 @@ BODY = r"""
       <summary><svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg> <span id="excludedTitle">Почему остальные ЖК не подошли</span></summary>
       <div class="cards" id="excludedCards"></div>
     </details>
+
+    <div class="mk-cta">
+      <button class="btn-market" type="button" id="marketBtn"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg>
+        Посмотреть все новостройки города <b id="marketBtnCount">5</b></button>
+      <p>Здесь — только то, что прошло ваш фильтр. В списке всех новостроек города карточки идут как на площадке
+        объявлений: цена входа, метр, сроки сдачи, стадии, лоты и ссылка на источник.</p>
+    </div>
   </main>
+
+  <section class="market" id="market" hidden aria-labelledby="marketH">
+    <div class="market-head">
+      <div class="mh-top">
+        <h2 id="marketH">Все новостройки города</h2>
+        <span class="market-note" id="marketNote"></span>
+      </div>
+      <span class="chips" role="group" aria-label="Сортировка" id="marketSort"></span>
+      <span class="chips">
+        <button class="chip" type="button" id="marketAll" aria-pressed="false">Показать весь срез — 15 ЖК</button>
+        <button class="chip" type="button" id="marketClose">Вернуться к подбору</button>
+      </span>
+    </div>
+    <div class="market-grid" id="marketList"></div>
+  </section>
 
   <section class="sheet" id="sheet" aria-label="Сравнение трёх городов"></section>
 
@@ -669,6 +843,10 @@ ICONS = r"""
     <symbol id="i-search" viewBox="0 0 24 24"><path d="M10 2a8 8 0 1 0 4.9 14.3l5 5 1.4-1.4-5-5A8 8 0 0 0 10 2Zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12Z"/></symbol>
     <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.9 5.6L19.5 9.5l-5.6 1.9L12 17l-1.9-5.6L4.5 9.5l5.6-1.9Zm6.5 10.5.9 2.6 2.6.9-2.6.9-.9 2.6-.9-2.6-2.6-.9 2.6-.9Z"/></symbol>
     <symbol id="i-scale" viewBox="0 0 24 24"><path d="M12 3 3 7v2.4L12 13l9-3.6V7Zm-9 9.4V17l9 3.6 9-3.6v-4.6L12 16Z"/></symbol>
+    <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6h10v2H4Zm12 0h4v2h-4ZM4 11h4v2H4Zm6 0h10v2H10ZM4 16h10v2H4Zm12 0h4v2h-4Z"/></symbol>
+    <symbol id="i-school" viewBox="0 0 24 24"><path d="M12 3 2 8l4 2.2V17l6 3 6-3v-6.8L22 8Zm0 2.6L18 8l-6 3L6 8Zm-4 6.7 4 2.1 4-2.1v3.3l-4 2-4-2Z"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><path d="M3 3h8v8H3Zm10 0h8v8h-8ZM3 13h8v8H3Zm10 0h8v8h-8Z"/></symbol>
+    <symbol id="i-crane" viewBox="0 0 24 24"><path d="M3 4h18v2h-4l-1 3h2v2h-3v9h-2v-9H7v2H5V7h3L9 5H5V3H3Z"/></symbol>
     <symbol id="i-key" viewBox="0 0 24 24"><path d="M14 2a6 6 0 0 0-5.6 8.2L2 16.6V22h5.4l1.5-1.5v-2h2l1.5-1.5v-2.2A6 6 0 1 0 14 2Zm3.5 6.5a1.6 1.6 0 1 1 0-3.2 1.6 1.6 0 0 1 0 3.2Z"/></symbol>
   </svg>
 """
@@ -701,9 +879,9 @@ def build():
     app_js = (REPO / "app" / "app.js").read_text(encoding="utf-8")
     (REPO / "app" / "styles.css").write_text(css.strip() + "\n", encoding="utf-8")
 
-    def wrap(scripts_css, scripts_js, photos_js=""):
+    def wrap(scripts_css, scripts_js):
         return ("<!DOCTYPE html>\n<html lang=\"ru\">\n<head>" + HEAD +
-                "\n" + scripts_css + "\n</head>\n<body>\n" + ICONS + photos_js + BODY +
+                "\n" + scripts_css + "\n</head>\n<body>\n" + ICONS + BODY +
                 "\n" + scripts_js + "\n</body>\n</html>\n")
 
     # 1) обычный сайт: внешние файлы (кэш, LCP, вес страницы)
@@ -713,8 +891,7 @@ def build():
 
     # 2) standalone: всё внутри одного файла — открывается двойным кликом офлайн
     inline = wrap('<style>' + css + "</style>",
-                  "<script>\n" + data_js + "\n" + calc_js + "\n" + app_js + "\n</script>",
-                  "<script>window.ZHK_PHOTOS=" + json.dumps(B64, ensure_ascii=False) + ";</script>")
+                  "<script>\n" + data_js + "\n" + calc_js + "\n" + app_js + "\n</script>")
     (REPO / "index-standalone.html").write_text(inline, encoding="utf-8")
 
     print(f"images: {len(imgs)} файлов, {sum(s for _, s in imgs) // 1024} КБ суммарно")
