@@ -1,0 +1,803 @@
+[
+  {
+    "id": "sochi-kislorod",
+    "city": "Сочи",
+    "name": "ЖК «Кислород»",
+    "developer": "AVA Group",
+    "district": "Хостинский р-н, склон мкр Бытха",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 306237.0,
+    "pricePerM2Max": 410989.0,
+    "pricePerM2Avg": 328491.0,
+    "minLotMln": 7.53,
+    "maxLotMln": 21.6,
+    "minAreaM2": 22.77,
+    "offers": 44,
+    "delivery": "Сдача в 2023 - 2026",
+    "deliveryYearFrom": 2023,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 22.77,
+        "fromMln": 7.53,
+        "toMln": 17.31
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 38.02,
+        "fromMln": 12.45,
+        "toMln": 14.88
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 44.62,
+        "fromMln": 14.9,
+        "toMln": 17.65
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 65.92,
+        "fromMln": 20.23,
+        "toMln": 21.6
+      }
+    ],
+    "feature": "Своя школа и детский сад, панорама на море",
+    "imgKey": "sochi-kislorod",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/kislorod-3/",
+    "priceAsOf": "15.11.2026, 01:02",
+    "sourceTitle": "ЖК «Кислород» от застройщика AVA в Сочи — купить квартиру в новостройке от 7,53 млн ₽",
+    "n": 1,
+    "minLotImpliedPpm": 330698
+  },
+  {
+    "id": "sochi-svetsky-les",
+    "city": "Сочи",
+    "name": "ЖК «Светский лес»",
+    "developer": "ГК ТОЧНО",
+    "district": "Центральный р-н, ул. Краснодонская",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 388918.0,
+    "pricePerM2Max": 582346.0,
+    "pricePerM2Avg": 483780.0,
+    "minLotMln": 15.34,
+    "maxLotMln": 42.5,
+    "minAreaM2": 26.34,
+    "offers": 78,
+    "delivery": "Сдача в 2028",
+    "deliveryYearFrom": 2028,
+    "deliveryYearTo": 2028,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 26.34,
+        "fromMln": 15.34,
+        "toMln": 17.26
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 28.56,
+        "fromMln": 15.46,
+        "toMln": 28.64
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 46.21,
+        "fromMln": 23.01,
+        "toMln": 39.11
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 66.29,
+        "fromMln": 29.91,
+        "toMln": 42.5
+      }
+    ],
+    "feature": "Набережная реки Сочи и лесопарк вокруг квартала",
+    "imgKey": "sochi-svetsky-les",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/svetskii-les/",
+    "priceAsOf": "15.11.2026, 01:38",
+    "sourceTitle": "ЖК «Светский лес» от застройщика ГК ТОЧНО в Сочи — купить квартиру в новостройке от 15,34 млн ₽",
+    "n": 2,
+    "minLotImpliedPpm": 582384
+  },
+  {
+    "id": "sochi-neskuchny-sad",
+    "city": "Сочи",
+    "name": "ГК «Нескучный сад»",
+    "developer": "Неометрия",
+    "district": "Адлерский р-н, Курортный Городок",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 820257.0,
+    "pricePerM2Max": 1418526.0,
+    "pricePerM2Avg": 1111854.0,
+    "minLotMln": 26.24,
+    "maxLotMln": 158.95,
+    "minAreaM2": 22.2,
+    "offers": 47,
+    "delivery": "Сдача в 2025 - 2026",
+    "deliveryYearFrom": 2025,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 22.2,
+        "fromMln": 26.24,
+        "toMln": 33.05
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 25.1,
+        "fromMln": 32.99,
+        "toMln": 47.09
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 33.1,
+        "fromMln": 34.22,
+        "toMln": 61.42
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 50.9,
+        "fromMln": 54.41,
+        "toMln": 133.14
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 79.1,
+        "fromMln": 71.47,
+        "toMln": 158.95
+      }
+    ],
+    "feature": "Курортная зона в 900 м от моря, закрытый двор",
+    "imgKey": "sochi-neskuchny-sad",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/gostinicnii-kompleks-neskycnii-sad/",
+    "priceAsOf": "15.11.2026, 01:32",
+    "sourceTitle": "ЖК «Гостиничный комплекс «Нескучный сад» от застройщика Девелоперская компания «Неометрия» в Сочи — купить квартиру в новостройке от 26,24 млн ₽",
+    "n": 3,
+    "minLotImpliedPpm": 1181982
+  },
+  {
+    "id": "sochi-belye-nochi",
+    "city": "Сочи",
+    "name": "ЖК «Белые Ночи»",
+    "developer": "PARADE Development",
+    "district": "Лазаревский р-н, мкр Уч-Дере",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 827999.0,
+    "pricePerM2Max": 1018000.0,
+    "pricePerM2Avg": 963739.0,
+    "minLotMln": 28.37,
+    "maxLotMln": 58.97,
+    "minAreaM2": 28.98,
+    "offers": 68,
+    "delivery": "Сдача в 2028",
+    "deliveryYearFrom": 2028,
+    "deliveryYearTo": 2028,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 28.98,
+        "fromMln": 28.37,
+        "toMln": 31.4
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 29.25,
+        "fromMln": 29.04,
+        "toMln": 46.69
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 38.09,
+        "fromMln": 35.88,
+        "toMln": 55.9
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 65.97,
+        "fromMln": 55.22,
+        "toMln": 58.97
+      }
+    ],
+    "feature": "Субтропический парк на первой линии у моря",
+    "imgKey": "sochi-belye-nochi",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/belie-noci-6/",
+    "priceAsOf": "15.11.2026, 01:17",
+    "sourceTitle": "ЖК «Белые Ночи» от застройщика PARADE Development в Сочи — купить квартиру в новостройке от 28,37 млн ₽",
+    "n": 4,
+    "minLotImpliedPpm": 978951
+  },
+  {
+    "id": "sochi-polyana-pik",
+    "city": "Сочи",
+    "name": "ЖК «Поляна Пик»",
+    "developer": "PARADE Development",
+    "district": "Адлерский р-н, Красная Поляна",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 890000.0,
+    "pricePerM2Max": 1391000.0,
+    "pricePerM2Avg": 1193077.0,
+    "minLotMln": 54.63,
+    "maxLotMln": 214.49,
+    "minAreaM2": 44.1,
+    "offers": 73,
+    "delivery": "Сдача в 2026",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 47.3,
+        "fromMln": 63.85,
+        "toMln": 70.06
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 44.1,
+        "fromMln": 54.63,
+        "toMln": 120.56
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 57.7,
+        "fromMln": 75.01,
+        "toMln": 214.49
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 144.4,
+        "fromMln": 155.66,
+        "toMln": 214.49
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 174.9,
+        "fromMln": 155.66,
+        "toMln": 155.66
+      }
+    ],
+    "feature": "Горный курорт у подножия Роза Пик, SPA и бассейн",
+    "imgKey": "sochi-polyana-pik",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/polyana-pik/",
+    "priceAsOf": "15.11.2026, 01:32",
+    "sourceTitle": "ЖК «Поляна Пик» от застройщика PARADE Development в Сочи — купить квартиру в новостройке от 54,63 млн ₽",
+    "n": 5,
+    "minLotImpliedPpm": 1238776
+  },
+  {
+    "id": "msk-admiral",
+    "city": "Москва",
+    "name": "ЖК «Адмирал»",
+    "developer": "Галс-Девелопмент",
+    "district": "ЮВАО, Печатники (3 мин. до метро)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 395177.0,
+    "pricePerM2Max": 681442.0,
+    "pricePerM2Avg": 658781.0,
+    "minLotMln": 18.01,
+    "maxLotMln": 42.2,
+    "minAreaM2": 28.8,
+    "offers": 84,
+    "delivery": "Сдача в 2028",
+    "deliveryYearFrom": 2028,
+    "deliveryYearTo": 2028,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 28.8,
+        "fromMln": 18.01,
+        "toMln": 22.45
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 32.9,
+        "fromMln": 20.44,
+        "toMln": 24.38
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 40.4,
+        "fromMln": 22.91,
+        "toMln": 26.59
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 80.1,
+        "fromMln": 33.88,
+        "toMln": 34.25
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 86.8,
+        "fromMln": 37.35,
+        "toMln": 42.2
+      }
+    ],
+    "feature": "Квартал у Южного речного вокзала, 84 лота в выборе",
+    "imgKey": "msk-admiral",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/admiral-21/",
+    "priceAsOf": "15.11.2026, 01:01",
+    "sourceTitle": "ЖК «Адмирал» от застройщика Галс-Девелопмент в Москве — купить квартиру в новостройке от 18,01 млн ₽",
+    "n": 6,
+    "minLotImpliedPpm": 625347
+  },
+  {
+    "id": "msk-trilogiya-crystal",
+    "city": "Москва",
+    "name": "ЖК «Трилогия CRYSTAL»",
+    "developer": "Концерн КРОСТ",
+    "district": "СЗАО, Хорошёво-Мнёвники",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 438000.0,
+    "pricePerM2Max": 710000.0,
+    "pricePerM2Avg": 686500.0,
+    "minLotMln": 21.21,
+    "maxLotMln": 59.6,
+    "minAreaM2": 33.9,
+    "offers": 22,
+    "delivery": "Сдача в 2023 - 2027",
+    "deliveryYearFrom": 2023,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 33.9,
+        "fromMln": 21.21,
+        "toMln": 27.55
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 47.3,
+        "fromMln": 24.9,
+        "toMln": 31.85
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 64.4,
+        "fromMln": 36.06,
+        "toMln": 51.46
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 107.2,
+        "fromMln": 53.27,
+        "toMln": 59.6
+      }
+    ],
+    "feature": "Башни с двором-парком без машин, рядом Москва-река",
+    "imgKey": "msk-trilogiya-crystal",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/crystal-trilogiya--kristall-trilogiya-/",
+    "priceAsOf": "15.11.2026, 01:31",
+    "sourceTitle": "ЖК «Трилогия CRYSTAL (Трилогия Кристалл)» от застройщика Концерн КРОСТ в Москве — купить квартиру в новостройке от 21,21 млн ₽",
+    "n": 7,
+    "minLotImpliedPpm": 625664
+  },
+  {
+    "id": "msk-plekhanova-11",
+    "city": "Москва",
+    "name": "ЖК «Плеханова 11»",
+    "developer": "ПИК",
+    "district": "ВАО, Перово (3 мин. до м. Перово)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 508800.0,
+    "pricePerM2Max": 780000.0,
+    "pricePerM2Avg": 528546.0,
+    "minLotMln": 17.55,
+    "maxLotMln": 42.44,
+    "minAreaM2": 22.5,
+    "offers": 25,
+    "delivery": "Сдача в 2026",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 22.5,
+        "fromMln": 17.55,
+        "toMln": 18.44
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 32.7,
+        "fromMln": 20.5,
+        "toMln": 23.36
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 49.4,
+        "fromMln": 26.92,
+        "toMln": 37.57
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 69.8,
+        "fromMln": 38.6,
+        "toMln": 42.44
+      }
+    ],
+    "feature": "Чистовая отделка «заезжай и живи», рядом Кусковский парк",
+    "imgKey": "msk-plekhanova-11",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/plehanova-11/",
+    "priceAsOf": "15.11.2026, 01:30",
+    "sourceTitle": "ЖК «Плеханова 11» от застройщика ПИК в Москве — купить квартиру в новостройке от 17,55 млн ₽",
+    "n": 8,
+    "minLotImpliedPpm": 780000
+  },
+  {
+    "id": "msk-chistye-prudy",
+    "city": "Москва",
+    "name": "ЖК «Чистые Пруды»",
+    "developer": "Sminex",
+    "district": "ЦАО, Басманный (Потаповский пер.)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 1400956.0,
+    "pricePerM2Max": 4185076.0,
+    "pricePerM2Avg": 2592139.0,
+    "minLotMln": 161.11,
+    "maxLotMln": 1648.92,
+    "minAreaM2": 115.0,
+    "offers": 26,
+    "delivery": "Сдача в 2026",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 115.0,
+        "fromMln": 161.11,
+        "toMln": 335.89
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 141.0,
+        "fromMln": 417.2,
+        "toMln": 427.14
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 178.0,
+        "fromMln": 466.74,
+        "toMln": 702.32
+      },
+      {
+        "type": "5-комнатные",
+        "minAreaM2": 394.0,
+        "fromMln": 1545.95,
+        "toMln": 1648.92
+      },
+      {
+        "type": "6-комнатные",
+        "minAreaM2": 297.0,
+        "fromMln": 865.3,
+        "toMln": 865.3
+      }
+    ],
+    "feature": "Исторический клубный дом с приватным двором",
+    "imgKey": "msk-chistye-prudy",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/cistie-prydi-1/",
+    "priceAsOf": "15.11.2026, 01:32",
+    "sourceTitle": "ЖК «Исторический дом «Чистые Пруды» от застройщика Sminex в Москве — купить квартиру в новостройке от 161,11 млн ₽",
+    "n": 9,
+    "minLotImpliedPpm": 1400957
+  },
+  {
+    "id": "msk-clos-17",
+    "city": "Москва",
+    "name": "ЖК «Clos 17»",
+    "developer": "MR Group",
+    "district": "ЦАО, Арбат (1 мин. до м. Арбатская)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 2400000.0,
+    "pricePerM2Max": 3050000.0,
+    "pricePerM2Avg": 2744473.0,
+    "minLotMln": 227.53,
+    "maxLotMln": 322.69,
+    "minAreaM2": 82.74,
+    "offers": 4,
+    "delivery": "Сдача в 2027",
+    "deliveryYearFrom": 2027,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 82.74,
+        "fromMln": 227.53,
+        "toMln": 322.69
+      }
+    ],
+    "feature": "Камерный клубный особняк: 4 лота в продаже",
+    "imgKey": "msk-clos-17",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/clos-17--klo-17-/",
+    "priceAsOf": "15.11.2026, 01:38",
+    "sourceTitle": "ЖК «Clos 17 (Кло 17)» от застройщика MR в Москве — купить квартиру в новостройке от 227,54 млн ₽",
+    "n": 10,
+    "minLotImpliedPpm": 2749940
+  },
+  {
+    "id": "ekb-park-stolic",
+    "city": "Екатеринбург",
+    "name": "ЖК «Парк Столиц»",
+    "developer": "Атлас Девелопмент",
+    "district": "Чкаловский р-н, Автовокзал (м. Чкаловская)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 201047.0,
+    "pricePerM2Max": 251557.0,
+    "pricePerM2Avg": 235425.0,
+    "minLotMln": 10.49,
+    "maxLotMln": 21.24,
+    "minAreaM2": 43.6,
+    "offers": 13,
+    "delivery": "Сдача в 2021 - 2027",
+    "deliveryYearFrom": 2021,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 43.6,
+        "fromMln": 10.49,
+        "toMln": 13.18
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 71.0,
+        "fromMln": 15.42,
+        "toMln": 18.08
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 85.0,
+        "fromMln": 17.09,
+        "toMln": 21.24
+      }
+    ],
+    "feature": "Жилая экосистема с приватным парком и галереей",
+    "imgKey": "ekb-park-stolic",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/park-stolic/",
+    "priceAsOf": "15.11.2026, 01:14",
+    "sourceTitle": "ЖК «Парк Столиц» от застройщика Атлас Девелопмент в Екатеринбурге — купить квартиру в новостройке от 10,49 млн ₽",
+    "n": 11,
+    "minLotImpliedPpm": 240596
+  },
+  {
+    "id": "ekb-nagorny",
+    "city": "Екатеринбург",
+    "name": "ЖК «Нагорный»",
+    "developer": "УГМК-Застройщик",
+    "district": "Верх-Исетский р-н, ВИЗ-Правобережный",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 209903.0,
+    "pricePerM2Max": 270321.0,
+    "pricePerM2Avg": 254203.0,
+    "minLotMln": 14.3,
+    "maxLotMln": 40.42,
+    "minAreaM2": 52.9,
+    "offers": 11,
+    "delivery": "Сдача в 2020 - 2029",
+    "deliveryYearFrom": 2020,
+    "deliveryYearTo": 2029,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 52.9,
+        "fromMln": 14.3,
+        "toMln": 14.3
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 77.2,
+        "fromMln": 17.97,
+        "toMln": 20.75
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 112.0,
+        "fromMln": 24.03,
+        "toMln": 24.34
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 158.0,
+        "fromMln": 39.42,
+        "toMln": 40.42
+      }
+    ],
+    "feature": "Флагманский квартал рядом с пл. 1905 года",
+    "imgKey": "ekb-nagorny",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/nagornii-1/",
+    "priceAsOf": "15.11.2026, 01:31",
+    "sourceTitle": "ЖК «Нагорный» от застройщика УГМК-Застройщик в Екатеринбурге — купить квартиру в новостройке от 14,3 млн ₽",
+    "n": 12,
+    "minLotImpliedPpm": 270321
+  },
+  {
+    "id": "ekb-klever-park",
+    "city": "Екатеринбург",
+    "name": "ЖК «Клевер парк»",
+    "developer": "Acons Group",
+    "district": "Октябрьский р-н, Парковый (у ЦПКиО)",
+    "zhkClass": "Бизнес",
+    "classSource": "бизнес",
+    "pricePerM2": 232197,
+    "pricePerM2Max": 339700,
+    "pricePerM2Avg": null,
+    "minLotMln": 8.8,
+    "maxLotMln": 32.0,
+    "minAreaM2": 28.2,
+    "offers": null,
+    "delivery": "Строится до 3 кв. 2027 г.",
+    "deliveryYearFrom": 2027,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 28.2,
+        "fromMln": 8.8,
+        "toMln": 10.8
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 49.3,
+        "fromMln": 12.9,
+        "toMln": 17.0
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 60.3,
+        "fromMln": 15.8,
+        "toMln": 24.7
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 94.2,
+        "fromMln": 23.0,
+        "toMln": 32.0
+      }
+    ],
+    "feature": "Своя набережная Исети и прямой выход в парк",
+    "imgKey": "ekb-klever-park",
+    "sourceName": "m2.ru",
+    "sourceUrl": "https://m2.ru/yekaterinburg/novostroyki/zhk-klever-park-3216/",
+    "priceAsOf": "16.11.2026",
+    "sourceTitle": "ЖК «Клевер парк» (m2.ru)",
+    "n": 13,
+    "minLotImpliedPpm": 312057
+  },
+  {
+    "id": "ekb-dom-7",
+    "city": "Екатеринбург",
+    "name": "ЖК «DOM 7»",
+    "developer": "Компания Практика",
+    "district": "Верх-Исетский р-н, ВИЗ (2 мин. до м. Динамо)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 303753.0,
+    "pricePerM2Max": 474913.0,
+    "pricePerM2Avg": 391003.0,
+    "minLotMln": 13.09,
+    "maxLotMln": 49.51,
+    "minAreaM2": 36.06,
+    "offers": 19,
+    "delivery": "Сдача в 2026",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 36.06,
+        "fromMln": 13.09,
+        "toMln": 13.34
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 40.17,
+        "fromMln": 14.39,
+        "toMln": 15.81
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 66.38,
+        "fromMln": 20.81,
+        "toMln": 33.95
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 82.46,
+        "fromMln": 25.65,
+        "toMln": 38.75
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 117.3,
+        "fromMln": 49.51,
+        "toMln": 49.51
+      }
+    ],
+    "feature": "Видовая башня рядом с набережной Исети",
+    "imgKey": "ekb-dom-7",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/dom-7--dom-7-/",
+    "priceAsOf": "15.11.2026, 01:02",
+    "sourceTitle": "ЖК «DOM 7 (Дом 7)» от застройщика Компания Практика в Екатеринбурге — купить квартиру в новостройке от 13,09 млн ₽",
+    "n": 14,
+    "minLotImpliedPpm": 363006
+  },
+  {
+    "id": "ekb-literaturny",
+    "city": "Екатеринбург",
+    "name": "ЖК «Клубный дом Литературный»",
+    "developer": "ДК Север",
+    "district": "Кировский р-н, Центр (ул. Первомайская)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 498500.0,
+    "pricePerM2Max": 636400.0,
+    "pricePerM2Avg": 526302.0,
+    "minLotMln": 25.07,
+    "maxLotMln": 78.95,
+    "minAreaM2": 41.7,
+    "offers": 12,
+    "delivery": "Сдача в 2027",
+    "deliveryYearFrom": 2027,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 41.7,
+        "fromMln": 25.07,
+        "toMln": 25.07
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 55.1,
+        "fromMln": 30.45,
+        "toMln": 36.21
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 89.8,
+        "fromMln": 49.51,
+        "toMln": 78.95
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 151.1,
+        "fromMln": 75.32,
+        "toMln": 75.32
+      }
+    ],
+    "feature": "Малоэтажный клубный дом в тихом центре, 12 лотов",
+    "imgKey": "ekb-literaturny",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/po-yl-pervomaiskaya-1/",
+    "priceAsOf": "15.11.2026, 01:37",
+    "sourceTitle": "ЖК «Клубный дом Литературный» от застройщика Север (Тюмень) в Екатеринбурге — купить квартиру в новостройке от 25,07 млн ₽",
+    "n": 15,
+    "minLotImpliedPpm": 601199
+  }
+]
