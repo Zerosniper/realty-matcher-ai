@@ -133,17 +133,40 @@ code{background:#eef2f8;padding:1px 5px;border-radius:6px;font-size:.92em}
 .step-row p b{color:#fff}
 
 /* ---------- панель подбора ---------- */
-.finder-wrap{max-width:var(--maxw);margin:-28px auto 0;padding:0 22px 8px;position:relative;z-index:5}
-.finder{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:20px 22px 18px}
+/* ---- панель: вкладки + форма (верх средней части) ---- */
+.panel{max-width:var(--maxw);margin:-28px auto 0;padding:0 22px 8px;position:relative;z-index:5}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;background:rgba(255,255,255,.72);backdrop-filter:blur(6px);
+  border:1px solid var(--line);border-bottom:none;border-radius:16px 16px 0 0;padding:6px 8px 0}
+.tab{appearance:none;border:0;background:transparent;cursor:pointer;font:inherit;font-size:13px;font-weight:700;
+  color:var(--text-secondary);padding:9px 13px 11px;border-radius:11px 11px 0 0;border-bottom:3px solid transparent;
+  display:inline-flex;align-items:center;gap:7px;min-height:44px}
+.tab b{font-size:11.5px;font-weight:800;background:#eef2f8;color:var(--text-secondary);border-radius:999px;padding:1px 7px;font-variant-numeric:tabular-nums}
+.tab:hover{color:var(--brand-blue-dark);background:#f4f7fd}
+.tab.is-on{color:var(--brand-blue-dark);background:var(--card);border-bottom-color:var(--brand-blue)}
+.tab.is-on b{background:var(--brand-blue);color:#fff}
+.finder{background:var(--card);border:1px solid var(--line);border-radius:0 0 22px 22px;box-shadow:var(--shadow);padding:16px 18px 16px}
+.pane[hidden]{display:none}
+.chips.citypick{display:flex;gap:6px;flex-wrap:wrap}
+.chips.citypick .chip{min-height:40px}
+.market.pane{padding-top:2px}
+.block-saved{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:6px 14px 12px;margin-top:10px}
+.block-saved .classbar{border-top:none;margin-top:0;padding-top:6px}
 .finder-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
 .finder-head h2{margin:0;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
 .finder-head p{margin:0;font-size:12.8px;color:var(--text-muted)}
 .fields{display:grid;grid-template-columns:1.02fr 1fr 1fr 224px;gap:14px;align-items:stretch}
 /* --- шаги подбора: вертикальный сценарий, город задаёт настроение --- */
-.steps-flow{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
-.step-duo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
-.step{border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px 15px;background:#fbfcfe;display:flex;flex-direction:column;gap:10px;min-width:0}
-.step-city{background:#fff}
+.find-form{display:grid;gap:10px}
+.row{display:grid;gap:10px;align-items:start;border:1px solid var(--line);border-radius:var(--radius);background:#fbfcfe;padding:11px 13px 12px}
+.row-duo{grid-template-columns:minmax(0,1fr) minmax(0,1fr);border:none;padding:0;background:none}
+.row-lab{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary);padding-top:9px;white-space:nowrap}
+.row-city{grid-template-columns:minmax(150px,190px) minmax(0,1fr) auto;column-gap:12px;row-gap:1px;align-items:center;padding-bottom:10px}
+.row-city>.row-lab{grid-column:1;grid-row:1;padding-top:0}
+.row-city>.city-cards{grid-column:2;grid-row:1}
+.row-city>.field-hint{grid-column:3;grid-row:1;justify-self:end}
+.row-city>.field-note{grid-column:2/-1;grid-row:2;margin:0}
+.cell{display:grid;gap:9px;min-width:0;border:1px solid var(--line);border-radius:var(--radius);background:#fff;padding:11px 13px 12px}
+.cell-lab{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary)}
 .city-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .city-card{position:relative;overflow:hidden;display:grid;gap:2px;text-align:left;border:1px solid var(--line);border-radius:16px;
   background:#fff;padding:12px 14px;cursor:pointer;min-height:126px;color:var(--text);font-family:inherit;
@@ -190,13 +213,13 @@ code{background:#eef2f8;padding:1px 5px;border-radius:6px;font-size:.92em}
 /* полоса результата под полями */
 .cta-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:13px 16px;border-radius:16px;
   background:linear-gradient(100deg,var(--ink),var(--ink-2));color:#fff}
-.cta-bar .cta-count{line-height:1.25}
+.cta-bar .cta-count{display:inline-flex;flex-direction:column;gap:2px;line-height:1.25;text-align:left}
 .cta-bar .big{font-size:16px;font-weight:800}
 .cta-bar .small{font-size:12px;color:#b9c6dd}
 .cta-bar .btn-go{margin-left:auto}
 /* анимация переключения города */
-.finder.city-switch .step{animation:stepIn .5s cubic-bezier(.2,.7,.2,1) both}
-.finder.city-switch .step-duo .step:nth-child(2){animation-delay:.07s}
+.panel.city-switch .cell,.panel.city-switch .row-city{animation:stepIn .5s cubic-bezier(.2,.7,.2,1) both}
+.panel.city-switch .cell-area{animation-delay:.07s}
 @keyframes stepIn{from{opacity:.35;transform:translateY(6px) scale(.995)}to{opacity:1;transform:none}}
 .field{border:1px solid var(--line);border-radius:var(--radius);padding:13px 14px 14px;background:#fbfcfe;display:flex;flex-direction:column;gap:10px;min-height:196px}
 .field-top{display:flex;align-items:center;justify-content:space-between;gap:6px;white-space:nowrap}
@@ -442,8 +465,27 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
 .hero-art .ha-legend{display:flex;flex-wrap:wrap;gap:11px;margin-top:8px;font-size:11.2px;color:#c3d2ec}
 .hero-art .ha-legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 /* ---------- список «как в Авито» ---------- */
-.market{max-width:var(--maxw);margin:0 auto;padding:24px 22px 6px;scroll-margin-top:84px}
-.market-head{display:grid;gap:9px;margin-bottom:14px}
+.market{max-width:var(--maxw);margin:0 auto;padding:0 22px 6px;scroll-margin-top:84px}
+.market .market-head{margin-top:16px;padding:0}
+.market-head{display:grid;gap:9px;margin:14px auto 14px;max-width:var(--maxw);padding:0 22px}
+.mh-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+#market #listBack{border-style:dashed}
+#market .mood{margin-top:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding:11px 13px;background:var(--surface-sunken);border:1px solid var(--line-soft);border-radius:10px}
+#market .mood[hidden]{display:none}
+#market .mood-lead{margin:0;flex:1 1 460px;min-width:0;font-size:13.5px;line-height:1.5;color:var(--text-secondary);max-width:78ch}
+#market .mood-facts{display:flex;gap:6px;flex-wrap:wrap}
+#market .mood .fact{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--surface-raised);border:1px solid var(--line);border-radius:999px}
+#market .mood .fact i{font-style:normal;color:var(--text-muted);font-size:11.5px}
+#market .mood .fact b{font-size:12.5px;font-weight:600;color:var(--text-primary)}
+#market .mood-deals{flex:1 1 100%;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:12.5px;color:var(--text-muted)}
+#market .mood-deals .chip{min-height:32px;padding:4px 11px;border:1px solid var(--line);background:var(--surface-raised);border-radius:999px;cursor:pointer;font-size:12.5px;color:var(--text-primary)}
+#market .mood-deals .chip:hover{background:var(--brand-soft);border-color:rgba(15,118,110,.45)}
+.list-head{display:flex;gap:8px 18px;align-items:baseline;justify-content:space-between;flex-wrap:wrap;margin:0 0 10px}
+.list-head h2{margin:0;font-family:var(--font-display);font-size:20px}
+.list-note{font-size:12px;color:var(--text-muted)}
+.hero--slim{padding-bottom:44px}
+.hero--slim h1{font-size:clamp(24px,3.4vw,38px)}
+.hero--slim .hero-sub{max-width:56ch;font-size:14px}
 .market-head .mh-top{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
 .market-head h2{margin:0;font-family:var(--font-display);font-size:21px;letter-spacing:-.01em}
 .market-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
@@ -478,25 +520,21 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
 .mk-foot a,.mk-foot button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 11px;font-size:12.2px;
   font-weight:700;cursor:pointer;color:var(--brand-blue-dark);text-decoration:none;display:inline-flex;align-items:center;gap:6px;min-height:40px}
 .market-note{font-size:12.2px;color:var(--text-muted)}
-.btn-market{border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 14px;font-weight:800;font-size:13.4px;
-  cursor:pointer;color:var(--brand-blue-dark);display:inline-flex;align-items:center;gap:8px;min-height:44px}
-.btn-market:hover{background:#f3f8ff;border-color:#c4d9fa}
-.btn-market b{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:20px;padding:0 6px;border-radius:999px;
-  background:var(--city-accent);color:#fff;font-size:12px;font-variant-numeric:tabular-nums}
-.mk-cta{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0 2px;padding:13px 15px;border-radius:16px;
-  border:1px solid var(--line);background:linear-gradient(135deg,#f7faff,#eef4ff)}
-.mk-cta p{margin:0;font-size:12.6px;color:var(--text-secondary);max-width:62ch}
 
 @media (max-width:1180px){
   .nav{display:none}.burger{display:grid}
   .fields{grid-template-columns:1fr 1fr}
   .city-cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
   .city-card{min-height:44px;padding:9px 7px;border-radius:13px}
-  .step-city{padding:11px 10px 12px}
+  .row-city{grid-template-columns:minmax(0,1fr)}
+  .row-city>.row-lab,.row-city>.city-cards,.row-city>.field-hint,.row-city>.field-note{grid-column:1;grid-row:auto}
+  .row-city>.field-hint{justify-self:start}
+  .row-lab{padding-top:0}
+  .cell{padding:10px 11px 11px}
   .city-name{font-size:12.2px;letter-spacing:-.25px;line-height:1.2}
   .city-mood,.city-meta{display:none}
   .city-photo{opacity:.1}
-  .step-duo{grid-template-columns:minmax(0,1fr)}
+  .row-duo{grid-template-columns:minmax(0,1fr)}
   .field-top{white-space:normal}
   .amount.big input,.amount.rub input{font-size:26px}
   .adv .nl-in{grid-template-columns:minmax(0,1fr) auto}
@@ -521,7 +559,7 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
   .brand-name,.brand-tag{display:none}.brand{gap:0}
   .citydd{flex:1;min-width:0}.citydd-btn{width:100%;justify-content:space-between;min-height:44px}
   .citydd-btn>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .hero-inner,.finder-wrap,.results,.sheet,.block,.lead,.foot{padding-left:14px;padding-right:14px}
+  .hero-inner,.panel,.results,.sheet,.block,.lead,.foot{padding-left:14px;padding-right:14px}
   .finder{padding:16px 14px 14px}
   .cards{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:14px -14px 0;padding:2px 14px 8px}
   .card{min-width:86vw;scroll-snap-align:start}
@@ -540,10 +578,10 @@ tr[data-fits="0"] td:first-child{box-shadow:inset 3px 0 0 var(--bad)}
   td.num{white-space:normal}
   tr[data-fits] td:first-child{box-shadow:none}
 }
-@media (prefers-reduced-motion:reduce){.mood.in,.finder.city-switch .step{animation:none}
+@media (prefers-reduced-motion:reduce){.mood.in,.panel.city-switch .cell,.panel.city-switch .row-city{animation:none}
   .a-bar,.a-line,.a-fade,.cta-bar.is-dirty .btn-go{animation:none}
   .city-card,.city-art,.city-photo,.nudge,.mk-card{transition:none}}
-@media print{.topbar,.finder-wrap,.hero-bg,.lead,.burger,.market,.mk-cta{display:none}.card,.verdict,.block .inner{box-shadow:none}}
+@media print{.topbar,.panel .tabs,.hero-bg,.lead,.burger,.market,.cta-bar{display:none}.card,.verdict,.block .inner{box-shadow:none}}
 """
 
 BODY = r"""
@@ -563,11 +601,10 @@ BODY = r"""
         <div class="citydd-menu" id="cityDDMenu" role="menu" aria-label="Выбор города"></div>
       </div>
       <nav class="nav" id="main-nav" aria-label="Разделы">
-        <a href="#finder">Подобрать квартиру</a>
         <a href="#results">Ваши ЖК</a>
-        <a href="#sheet">Сравнение городов</a>
         <a href="#chart">График цен</a>
         <a href="#market" data-open="market">Все новостройки</a>
+        <a href="#catalog">Таблица 15 ЖК</a>
       </nav>
       <div class="topbar-right">
         <span class="stamp"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-check"/></svg> Цены сверены с источниками 15-16.11.2026</span>
@@ -576,90 +613,56 @@ BODY = r"""
     </div>
   </header>
 
-  <section class="hero">
-    <div class="hero-bg" aria-hidden="true">
-      <div class="hero-veil"></div>
-    </div>
+  <section class="hero hero--slim">
+    <div class="hero-bg" aria-hidden="true"><div class="hero-veil"></div></div>
     <div class="hero-inner">
       <div>
-        <span class="hero-eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Бесплатно · без регистрации · 15 ЖК в срезе</span>
-        <h1>Какие новостройки вам по бюджету — и что в них реально можно купить за эти деньги</h1>
-        <p class="hero-sub">Не нужно открывать десятки вкладок и умножать «цену от» на метраж. Укажите город, бюджет и площадь — сервис
-          подберёт <b>подходящие ЖК по реальным лотам</b>: цена входа, остаток бюджета, ипотечный платёж и объяснение, почему вариант лучше.
-          Если квартир такой площади в комплексе нет — <b>скажем прямо</b>, а не нарисуем «вам хватает».</p>
-        <div class="hero-fine">
-          <span><svg class="ic ic--in" aria-hidden="true"><use href="#i-check"/></svg> 15 из 15 цен сверены вручную: realty.vbr.ru (14) и m2.ru (1), 15-16.11.2026</span>
-          <span><svg class="ic ic--in" aria-hidden="true"><use href="#i-key"/></svg> Считаем по минимальному лоту нужной комнаты, а не по «цене от за м²»</span>
-          <span><svg class="ic ic--in" aria-hidden="true"><use href="#i-share"/></svg> Подбор копируется ссылкой и собирается в сравнение</span>
-        </div>
+        <span class="hero-eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Бесплатно · 15 ЖК · цены сверены с источниками 15-16.11.2026</span>
+        <h1>Новостройки: подбор по бюджету и честный список ЖК</h1>
+        <p class="hero-sub">Город → бюджет в рублях → площадь. Считаем по фактическому минимальному лоту, а не «цена от × метраж».</p>
       </div>
-      <aside class="hero-side">
-        <div class="hero-art" id="heroArt" aria-live="polite"></div>
-        <div class="steps" aria-label="Как пользоваться сервисом">
-          <p class="steps-title">Как это работает — 3 шага</p>
-          <div class="step-row"><span class="step-num" aria-hidden="true">1</span><p>Выберите <b>город</b> — карточка подсветится, рядом появится короткая сводка. Никуда не перематывает.</p></div>
-          <div class="step-row"><span class="step-num" aria-hidden="true">2</span><p>Впишите <b>бюджет полными рублями</b> (15 000 000) или нажмите готовую кнопку — и укажите <b>метраж</b>.</p></div>
-          <div class="step-row"><span class="step-num" aria-hidden="true">3</span><p>Нажмите <b>«Подобрать новостройку»</b>: покажем до 3 вариантов с аналитикой цен, сроками сдачи и ссылкой на карточку застройщика.</p></div>
-        </div>
-      </aside>
+      <aside class="hero-side"><div class="hero-art" id="heroArt" aria-live="polite"></div></aside>
     </div>
   </section>
+  <div class="panel" id="panel">
+    <nav class="tabs" role="tablist" aria-label="Режимы">
+      <button class="tab is-on" role="tab" type="button" id="tabPick" aria-selected="true" aria-controls="results">Подбор по бюджету</button>
+      <button class="tab" role="tab" type="button" id="tabList" aria-selected="false" aria-controls="market">Все новостройки <b id="tabListCount">15</b></button>
+      <button class="tab" role="tab" type="button" id="tabSaved" aria-selected="false" aria-controls="savedBlock">Сохранённое <b id="tabSavedCount">0</b></button>
+    </nav>
 
-  <div class="finder-wrap">
-    <section class="finder" id="finder" aria-labelledby="finderTitle">
-      <div class="finder-head">
-        <h2 id="finderTitle"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg> Скажите, на что вы рассчитываете</h2>
-        <p>Три шага: город → бюджет → метраж. Всё по желанию уточняется ниже. Ничего само не перескакивает
-          и никуда не уводит: список вариантов покажет кнопка «Подобрать новостройку».</p>
-      </div>
-
-      <div class="steps-flow">
-        <section class="step step-city">
-          <div class="field-top">
-            <span class="step-tag"><i aria-hidden="true">1</i>Куда смотрим</span>
-            <span class="field-hint" id="cityCountHint"></span>
-          </div>
-          <div class="city-cards" role="tablist" aria-label="Город" id="cityTabs"></div>
+    <section class="finder" id="finder" aria-label="Параметры подбора">
+      <div class="find-form" id="findForm">
+        <div class="row row-city">
+          <span class="row-lab">Город</span>
+          <div class="city-cards" role="group" aria-label="Город" id="cityTabs"></div>
+          <span class="field-hint" id="cityCountHint"></span>
           <p class="field-note" id="cityPriceNote"></p>
-          <div class="mood" id="cityMood">
-            <p class="mood-lead" id="moodLead"></p>
-            <p class="mood-hint" id="moodHint"></p>
-            <div class="mood-facts" id="moodFacts"></div>
-            <div class="mood-deals" id="moodDeals"></div>
+        </div>
+
+        <div class="row row-duo">
+        <div class="cell cell-budget">
+          <span class="cell-lab">Бюджет, ₽</span>
+          <div class="amount rub">
+            <input type="text" id="budgetRub" class="typed" inputmode="numeric" value="25 000 000" autocomplete="off" spellcheck="false" aria-label="Бюджет в рублях" />
+            <span class="unit" aria-hidden="true">₽</span>
           </div>
-        </section>
+          <div class="rub-row">
+            <button class="nudge" type="button" id="budgetLess" aria-label="Уменьшить бюджет на 500 тысяч рублей">− 500 000</button>
+            <button class="nudge" type="button" id="budgetMore" aria-label="Увеличить бюджет на 500 тысяч рублей">+ 500 000</button>
+            <span class="rub-echo" id="budgetEcho">= 25 млн ₽</span>
+            <span class="field-hint" id="budgetPctHint"></span>
+          </div>
+          <div class="chips presets" role="group" aria-label="Быстрый выбор бюджета" id="budgetPresets"></div>
+          <p class="field-note" id="budgetTypeHint"></p>
+        </div>
 
-        <div class="step-duo">
-          <section class="step">
-            <div class="field-top">
-              <span class="step-tag"><i aria-hidden="true">2</i>Сколько готовы потратить</span>
-              <span class="field-hint" id="budgetPctHint"></span>
-            </div>
-            <div class="amount rub">
-              <input type="text" id="budgetRub" class="typed" inputmode="numeric" value="25 000 000" autocomplete="off" spellcheck="false" aria-label="Бюджет в рублях" />
-              <span class="unit" aria-hidden="true">₽</span>
-            </div>
-            <div class="rub-row">
-              <button class="nudge" type="button" id="budgetLess" aria-label="Уменьшить бюджет на 500 тысяч рублей">− 500 000</button>
-              <button class="nudge" type="button" id="budgetMore" aria-label="Увеличить бюджет на 500 тысяч рублей">+ 500 000</button>
-              <span class="rub-echo" id="budgetEcho">= 25 млн ₽</span>
-            </div>
-            <div class="chips presets" role="group" aria-label="Быстрый выбор бюджета" id="budgetPresets"></div>
-            <p class="field-note" id="budgetTypeHint"></p>
-          </section>
-
-          <section class="step">
-            <div class="field-top">
-              <span class="step-tag"><i aria-hidden="true">3</i>Какой метраж ищем</span>
-              <span class="field-hint" id="maxPpmHint"></span>
-            </div>
-            <div class="amount big">
-              <input type="text" id="areaInput" class="typed" inputmode="numeric" value="45" autocomplete="off" spellcheck="false" aria-label="Площадь, квадратных метров" />
-              <span class="unit" aria-hidden="true">м²</span>
-            </div>
-            <div class="chips presets" role="group" aria-label="Типовая квартира" id="areaPresets"></div>
-            <p class="field-note note-soft">Площадь — желаемая: если в комплексе нет лота такого метража, сервис так и напишет, а не нарисуует «хватает».</p>
-          </section>
+        <div class="cell cell-area">
+          <span class="cell-lab">Площадь, м²</span>
+          <div class="amount big"><input type="text" id="areaInput" class="typed" inputmode="numeric" value="45" autocomplete="off" spellcheck="false" aria-label="Площадь, квадратных метров" /><span class="unit" aria-hidden="true">м²</span></div>
+          <span class="field-hint" id="maxPpmHint"></span>
+          <div class="chips presets" role="group" aria-label="Типовая квартира" id="areaPresets"></div>
+        </div>
         </div>
       </div>
 
@@ -700,14 +703,17 @@ BODY = r"""
       </details>
 
       <div class="cta-bar" id="ctaBar">
-        <span class="cta-count"><span class="big" id="ctaCount">Есть подходящие варианты: 0</span><br />
-          <span class="small" id="ctaNote">Сочи · 25 000 000 ₽ · 45 м²</span></span>
-        <button class="btn-go" type="button" id="goBtn"><span id="goLabel">Подобрать новостройку</span> <b id="goCount">0</b></button>
+        <button class="btn-go" type="button" id="goBtn"><span id="goLabel">Поиск</span> <b id="goCount">0</b></button>
+        <span class="cta-count"><span class="big" id="ctaCount">Есть подходящие варианты: 0</span><span class="small" id="ctaNote">Сочи · 25 000 000 ₽ · 45 м²</span></span>
+        <button class="btn-ghost-light" type="button" id="marketBtn"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg> Просто смотреть список <b id="marketBtnCount">5</b></button>
         <button class="btn-ghost-light" type="button" id="shareBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-link"/></svg> <span id="shareLabel">Скопировать ссылку</span></button>
-        <button class="btn-ghost-light" type="button" id="printBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-scale"/></svg> На печать / в PDF</button>
+        <button class="btn-ghost-light" type="button" hidden id="printBtn"><svg class="ic" aria-hidden="true" style="width:15px;height:15px;vertical-align:-3px"><use href="#i-scale"/></svg> На печать / в PDF</button>
       </div>
-      <p class="cta-hint" id="ctaHint" hidden><svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-warn"/></svg> Параметры изменились — нажмите «Подобрать новостройку», чтобы обновить список.</p>
+      <p class="cta-hint" id="ctaHint" hidden><svg class="ic" aria-hidden="true" style="width:15px;height:15px"><use href="#i-warn"/></svg> Параметры изменились — нажмите «Поиск».</p>
+    </section>
+  </div><!-- /.panel -->
 
+    <section class="block block-saved pane pane-saved" id="savedBlock" hidden>
       <div class="classbar">
         <b>Сохранённое:</b>
         <button class="chip grow" type="button" id="compareBtn">Сравнить 0 ЖК</button>
@@ -715,7 +721,6 @@ BODY = r"""
         <button class="chip" type="button" id="resetBtn">Сбросить всё</button>
         <pre class="compare-out" id="compareOut" hidden></pre>
       </div>
-
       <div class="scenes">
         <b>Нет идей? Нажмите готовый сценарий:</b>
         <button class="chip" type="button" data-scene='{"city":"Сочи","budget":25,"area":45,"klass":"Все","q":"студия у моря до 20 млн в сочи"}'>Сочи · 25 млн · ищем у моря</button>
@@ -724,41 +729,39 @@ BODY = r"""
         <button class="chip" type="button" data-scene='{"city":"Москва","budget":140,"area":85,"klass":"Премиум","q":""}'>Премиум в ЦАО · 140 млн · 85 м²</button>
       </div>
     </section>
-  </div>
 
-  <main class="results" id="results" hidden>
+  <main class="results pane pane-pick" id="results" hidden>
     <section class="verdict" id="verdict" aria-live="polite"></section>
-
-    <div class="cards-head">
+    <div class="list-head">
       <h2 id="cardsH">Подходящие новостройки</h2>
-      <p>Цена = площадь × ₽/м² фактического минимального лота нужной комнаты · <svg class="ic" aria-hidden="true" style="width:13px;height:13px;vertical-align:-2px"><use href="#i-info"/></svg> «Как считали» — в каждой карточке</p>
+      <span class="list-note">Цена = площадь × ₽/м² фактического минимального лота нужной комнаты</span>
     </div>
     <div class="cards" id="topCards"></div>
-
     <details class="excluded" id="excludedWrap">
       <summary><svg class="ic" aria-hidden="true"><use href="#i-chev"/></svg> <span id="excludedTitle">Почему остальные ЖК не подошли</span></summary>
       <div class="cards" id="excludedCards"></div>
     </details>
-
-    <div class="mk-cta">
-      <button class="btn-market" type="button" id="marketBtn"><svg class="ic" aria-hidden="true"><use href="#i-grid"/></svg>
-        Посмотреть все новостройки города <b id="marketBtnCount">5</b></button>
-      <p>Здесь — только то, что прошло ваш фильтр. В списке всех новостроек города карточки идут как на площадке
-        объявлений: цена входа, метр, сроки сдачи, стадии, лоты и ссылка на источник.</p>
-    </div>
   </main>
 
-  <section class="market" id="market" hidden aria-labelledby="marketH">
+  <section class="market pane pane-list" id="market" hidden aria-labelledby="marketH">
     <div class="market-head">
       <div class="mh-top">
         <h2 id="marketH">Все новостройки города</h2>
         <span class="market-note" id="marketNote"></span>
       </div>
-      <span class="chips" role="group" aria-label="Сортировка" id="marketSort"></span>
-      <span class="chips">
-        <button class="chip" type="button" id="marketAll" aria-pressed="false">Показать весь срез — 15 ЖК</button>
-        <button class="chip" type="button" id="marketClose">Вернуться к подбору</button>
-      </span>
+      <div class="mh-row">
+        <span class="chips citypick" role="group" aria-label="Город в списке" id="cityTabsList"></span>
+        <span class="chips" role="group" aria-label="Сортировка" id="marketSort"></span>
+        <span class="chips">
+          <button class="chip" type="button" id="marketAll" aria-pressed="false">Показать весь срез — 15 ЖК</button>
+          <button class="chip" type="button" id="listBack">К подбору по бюджету</button>
+        </span>
+      </div>
+      <div class="mood" id="cityMood">
+        <p class="mood-lead" id="moodLead"></p>
+        <div class="mood-facts" id="moodFacts"></div>
+        <div class="mood-deals" id="moodDeals"></div>
+      </div>
     </div>
     <div class="market-grid" id="marketList"></div>
   </section>
@@ -889,9 +892,15 @@ def build():
                "<script>\n" + data_js + "\n" + calc_js + "\n" + app_js + "\n</script>")
     (REPO / "index.html").write_text(ext, encoding="utf-8")
 
-    # 2) standalone: всё внутри одного файла — открывается двойным кликом офлайн
+    # 2) standalone: всё внутри одного файла — открывается двойным кликом офлайн.
+    #    Фото в интерфейсе не используются (вместо них нарисованная аналитика), поэтому
+    #    в один файл заворачиваем только график-картинку.
     inline = wrap('<style>' + css + "</style>",
                   "<script>\n" + data_js + "\n" + calc_js + "\n" + app_js + "\n</script>")
+    chart = REPO / "chart_prices_2026.png"
+    if chart.exists():
+        uri = "data:image/png;base64," + base64.b64encode(chart.read_bytes()).decode("ascii")
+        inline = inline.replace('src="chart_prices_2026.png"', 'src="' + uri + '"')
     (REPO / "index-standalone.html").write_text(inline, encoding="utf-8")
 
     print(f"images: {len(imgs)} файлов, {sum(s for _, s in imgs) // 1024} КБ суммарно")

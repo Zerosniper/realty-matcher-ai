@@ -141,6 +141,68 @@
       b.setAttribute("aria-current", String(b.dataset.city === state.city));
     });
     $("cityDDLabel").textContent = state.city;
+    renderCityChipsList();
+  }
+
+  /* ------------------------------------------------------------------ режимы (вкладки)
+     «Подбор по бюджету» — форма и результат подбора; «Все новостройки» — список, который можно
+     смотреть совсем без подбора; «Сохранённое» — сравнение и готовые сценарии. Переключение режима
+     ничего не считает, никуда не прокручивает и не трогает введённые значения. */
+  var pane = "pick";
+  var appliedOnce = false;                    /* подбор ещё не нажимали — показывать нечего */
+  var PANE_TARGETS = { pick: ["results"], list: ["market"], saved: ["savedBlock"] };
+  function setPane(name) {
+    if (!PANE_TARGETS[name]) return;
+    pane = name;
+    var fnd = $("finder");
+    if (fnd) fnd.hidden = (name !== "pick");     /* в списке и в сохранённом форма не мешает */
+    [].forEach.call(["pick", "list", "saved"], function (n) {
+      (PANE_TARGETS[n] || []).forEach(function (id) {
+        var e = $(id);
+        if (!e) return;
+        var show = (n === name) && (id !== "results" || appliedOnce);
+        e.hidden = !show;
+      });
+      var tab = $("tab" + n.charAt(0).toUpperCase() + n.slice(1));
+      if (tab) { tab.classList.toggle("is-on", n === name); tab.setAttribute("aria-selected", String(n === name)); }
+    });
+  }
+  function syncTabs() {
+    var t = $("tabListCount");
+    if (t) t.textContent = String(mktAll ? DATA.length : cityList(state.city).length);
+    var t2 = $("tabSavedCount");
+    if (t2) t2.textContent = String(saved.length);
+  }
+  /* Если панель-результат уехала за экран — мягко подтягиваем её край; с места не прыгаем. */
+  function revealPane(id) {
+    var el = $(id);
+    if (!el || el.hidden) return;                 /* показывать нечего — страницу не трогаем */
+    var r = el.getBoundingClientRect();
+    if (!r.height) return;
+    if (r.top < 60 && r.bottom > 160) return;
+    if (r.top > window.innerHeight * 0.7 || r.bottom < 80) {
+      window.scrollTo({ top: Math.max(0, r.top + window.scrollY - 74), behavior: reducedMotion() ? "auto" : "smooth" });
+    }
+  }
+  function bindPanes() {
+    ["pick", "list", "saved"].forEach(function (n) {
+      var tab = $("tab" + n.charAt(0).toUpperCase() + n.slice(1));
+      if (tab) tab.addEventListener("click", function () {
+        if (n === "list") renderMarket();
+        setPane(n);
+        revealPane(PANE_TARGETS[n][0]);
+      });
+    });
+  }
+
+  /* Тот же выбор города, но чипами — внутри списка: переключать город можно, не возвращаясь в панель. */
+  function renderCityChipsList() {
+    var host = $("cityTabsList");
+    if (!host) return;
+    host.innerHTML = cities().map(function (c) {
+      return '<button class="chip" type="button" data-city="' + esc(c) + '" aria-pressed="' + (c === state.city) + '">' +
+        esc(c) + " · " + cityList(c).length + " ЖК</button>";
+    }).join("");
   }
 
   var moodCity = null;
@@ -154,8 +216,8 @@
     renderDistrictChips();
     renderIntentToggles();
     if (changed) {
-      $("finder").classList.add("city-switch");
-      setTimeout(function () { $("finder").classList.remove("city-switch"); }, 620);
+      $("panel").classList.add("city-switch");
+      setTimeout(function () { $("panel").classList.remove("city-switch"); }, 620);
     }
     preview();
   }
@@ -192,7 +254,7 @@
     document.documentElement.style.setProperty("--city-soft", t.soft);
     var f = cityFacts(c);
     $("moodLead").textContent = t.lead;
-    $("moodHint").textContent = t.hint;
+    var mhHint = $("moodHint"); if (mhHint) mhHint.textContent = t.hint;
     $("moodFacts").innerHTML = f.facts.map(function (x) {
       return '<span class="fact"><i>' + esc(x.k) + "</i><b>" + esc(x.v) + "</b></span>";
     }).join("");
@@ -531,8 +593,6 @@
     $("ctaNote").textContent = state.city + " · " + rubTxt(state.budgetRub) + " ₽ · " + state.area + " м²" +
       (state.district ? " · " + state.district : "") + (want.length ? " · " + want.join(" + ") : "") +
       (state.klass !== "Все" ? " · " + state.klass.toLowerCase() : "");
-    $("goLabel").textContent = applied() ? "Подобрать ещё раз" : "Подобрать новостройку";
-    $("goCount").textContent = fit;
     $("marketBtnCount").textContent = list.length;
     renderMood();
     renderBudgetHint();
@@ -956,16 +1016,12 @@
       " · цена " + (r_asOf()) + " · метр и лоты — из карточки источника";
     $("marketAll").setAttribute("aria-pressed", String(mktAll));
     $("marketAll").textContent = mktAll ? "Только " + n + " — 5 ЖК" : "Показать весь срез — 15 ЖК";
+    syncTabs();
   }
 
   function r_asOf() { return "15-16.11.2026"; }
 
-  function showMarket() {
-    $("market").hidden = false;
-    renderMarket();
-    var y = $("market").getBoundingClientRect().top + window.scrollY - 74;
-    window.scrollTo({ top: Math.max(0, y), behavior: reducedMotion() ? "auto" : "smooth" });
-  }
+  function showMarket() { renderMarket(); setPane("list"); revealPane("market"); }
 
   /* ------------------------------------------------------------------ заявка / сравнение */
   function toggleSaved(name) {
@@ -977,6 +1033,7 @@
       : "Демо-форма: отправка не подключена (нет бэкенда). В проде — CRM или Telegram-бот застройщика.";
     (last ? last.top.concat(last.rest) : []).forEach(function (r) { updateCard(cardCache.get(r.zhk.id), r, last.top[0] === r); });
     if ($("market") && !$("market").hidden) renderMarket();
+    syncTabs();
   }
 
   /* ------------------------------------------------------------------ URL */
@@ -1017,6 +1074,7 @@
       if (state.intents.length) any = true;
     }
     if (p.get("q")) { state.query = String(p.get("q")).slice(0, 120); any = true; }
+    if (p.get("tab") === "list") pane = "list";    /* «пришли и смотрите список», подбор не запускаем */
     deepLinked = any;   // по ссылке с параметрами результат показываем сразу — человек уже всё выбрал
   }
 
@@ -1049,7 +1107,9 @@
           klass: state.klass, query: state.query, district: state.district, intents: state.intents.slice() };
     last = res;
     tableDirty = true;
+    appliedOnce = true;
     $("results").hidden = false;
+    setPane("pick");
     renderPanelHints(res);
     renderVerdict(res);
     $("cardsH").textContent = (res.fittingCount ? "Топ-" + res.top.length : "Варианты") + " новостроек " +
@@ -1106,11 +1166,11 @@
     [].forEach.call(document.querySelectorAll("[data-budget]"), function (x) { x.setAttribute("aria-pressed", String(parseNum(x.dataset.budget) === state.budget)); });
     [].forEach.call(document.querySelectorAll("[data-area]"), function (x) { x.setAttribute("aria-pressed", String(parseNum(x.dataset.area) === state.area)); });
     markKlass();
-    if (changedCity) $("finder").classList.add("city-switch");
+    if (changedCity) $("panel").classList.add("city-switch");
     syncCityUI();
     renderDistrictChips();
     renderIntentToggles();
-    if (changedCity) setTimeout(function () { $("finder").classList.remove("city-switch"); }, 620);
+    if (changedCity) setTimeout(function () { $("panel").classList.remove("city-switch"); }, 620);
     apply(scroll);
   }
   function bind() {
@@ -1275,10 +1335,20 @@
       renderMarket();
     });
     $("marketAll").addEventListener("click", function () { mktAll = !mktAll; renderMarket(); });
-    $("marketClose").addEventListener("click", function () {
-      $("market").hidden = true;
-      window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
+    var mcBtn = $("marketClose");
+    if (mcBtn) mcBtn.addEventListener("click", function () { setPane("pick"); });
+    var lb = $("listBack");                     /* из списка — обратно к подбору, без прокрутки вверх */
+    if (lb) lb.addEventListener("click", function () { setPane("pick"); revealPane("finder"); });
+    var chipsList = $("cityTabsList");
+    if (chipsList) chipsList.addEventListener("click", function (e) {
+      var b = e.target && e.target.closest ? e.target.closest("[data-city]") : null;
+      if (!b || b.dataset.city === state.city) return;
+      state.city = b.dataset.city;          /* только выбор города: без скролла и без подбора */
+      state.district = "";
+      syncCityUI(); renderDistrictChips(); renderIntentToggles(); renderMood();
+      renderMarket(); preview(); syncUrl();
     });
+    bindPanes();
     $("marketList").addEventListener("click", function (e) {
       var b = e.target && e.target.closest ? e.target.closest("[data-save]") : null;
       if (!b) return;
@@ -1290,7 +1360,7 @@
         e.preventDefault();
         document.body.classList.remove("mobile-nav-open");
         $("burger").setAttribute("aria-expanded", "false");
-        if (a.dataset.open === "market") { $("results").hidden = false; showMarket(); }
+        if (a.dataset.open === "market") showMarket();
       });
     });
     renderMarketSort();
@@ -1371,7 +1441,10 @@
     bind();
     watchArtBox();
     $("compareBtn").textContent = saved.length ? "Сравнить " + saved.length + " ЖК" : "Сравнить 0 ЖК";
+    syncTabs();
+    var wantPane = pane;
     if (deepLinked) apply(false); else preview();
+    if (wantPane === "list") { renderMarket(); setPane("list"); }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
