@@ -1,5 +1,5 @@
 /*
- * tests/calc.test.js — проверка модели подбора на РЕАЛЬНЫХ данных 15 ЖК.
+ * tests/calc.test.js — проверка модели подбора на РЕАЛЬНЫХ данных (сейчас 30 ЖК).
  * Запуск:  node tests/calc.test.js      (node >= 14, зависимостей нет)
  *
  * Тесты родились из аудита: старая формула «цена от ₽/м² × площадь» обещала квартиру
@@ -21,13 +21,21 @@ function test(name, fn) {
   catch (e) { console.log("FAIL  " + name + "\n      " + e.message); process.exitCode = 1; }
 }
 
-console.log("\nНовостройкиПро · тесты расчёта (" + DATA.length + " ЖК, данные 15-16.11.2026)\n");
+const CITY_N = {};
+DATA.forEach((z) => { CITY_N[z.city] = (CITY_N[z.city] || 0) + 1; });
+const CITY_MAX = Math.max.apply(null, Object.keys(CITY_N).map((c) => CITY_N[c]));
+const ASOF = [...new Set(DATA.map((z) => String(z.priceAsOf || "").split(",")[0]).filter(Boolean))].sort().join(" / ");
 
-test("датасет: 15 ЖК, 3 города, класс у каждой строки есть в источнике", () => {
-  assert.strictEqual(DATA.length, 15);
+console.log("\nНовостройкиПро · тесты расчёта (" + DATA.length + " ЖК, срез цен " + ASOF + ")\n");
+
+test("датасет: " + DATA.length + " ЖК, 3 города поровну, класс у каждой строки есть в источнике", () => {
+  assert.ok(DATA.length >= 15, "датасет не должен усыхать: " + DATA.length);
   const cities = {};
   DATA.forEach((z) => { cities[z.city] = (cities[z.city] || 0) + 1; });
-  assert.deepStrictEqual(cities, { "Сочи": 5, "Москва": 5, "Екатеринбург": 5 });
+  assert.strictEqual(Object.keys(cities).length, 3, "города: " + Object.keys(cities).join(", "));
+  assert.ok(new Set(Object.keys(cities).map((c) => cities[c])).size === 1,
+    "в каждом города одинаковое число ЖК, получено " + JSON.stringify(cities));
+  assert.strictEqual(cities["Сочи"], CITY_MAX);
   DATA.forEach((z) => assert.ok(z.classSource, "нет класса из источника у " + z.name));
   DATA.forEach((z) => assert.ok(z.sourceUrl.startsWith("https://"), "нет источника у " + z.name));
 });
@@ -60,13 +68,19 @@ test("«Clos 17»: 85 м² в бюджет 140 млн НЕ проходит (ф�
   assert.ok(r.cost > 200, "оценка не может быть ниже реального мин. лота: " + r.cost);
 });
 
-test("пресет «Премиум в ЦАО 140 млн / 85 м²»: в премиуме ЦАО ничего не проходит", () => {
+test("пресет «Премиум в Москве 140 млн / 85 м²»: проходит только то, что реально влезает", () => {
   const res = CALC.match(DATA, { city: "Москва", budgetMln: 140, areaM2: 85, klass: "Премиум" });
-  assert.strictEqual(res.fittingCount, 0, "ни один премиум-ЖК не влезает: " + JSON.stringify(res.top.map((r) => [r.zhk.name, r.status])));
+  // «в срезе из 5 ЖК не проходил ни один» — было следствием размера выборки, а не правилом.
+  // Правило другое: в «подходящих» не может быть цены выше бюджета и несуществующего метража.
+  res.top.forEach((r) => {
+    if (r.status !== "fits") return;
+    assert.ok(r.cost <= 140.001, r.zhk.name + ": цена " + r.cost + " не влезает в 140 млн");
+    assert.ok(r.estimate.available, r.zhk.name + ": в «подходящих» не может быть ЖК без лота нужной площади");
+  });
   const ch = res.all.find((r) => r.zhk.name.includes("Чистые Пруды"));
-  assert.strictEqual(ch.status, "unavailable");
+  assert.strictEqual(ch.status, "unavailable", "у «Чистых Прудов» минимум 115 м² — 85 м² быть не может");
   const cl = res.all.find((r) => r.zhk.name.includes("Clos 17"));
-  assert.strictEqual(cl.status, "over");
+  assert.strictEqual(cl.status, "over", "Clos 17: вход 227,53 млн против бюджета 140 млн");
 });
 
 test("фильтр класса включён — бизнес Москвы на 140 млн / 85 м² честно проходит", () => {
@@ -165,9 +179,18 @@ test("разговорные названия комнат превращают�
 test("комнатные слова не вычёркивают ЖК из выдачи", () => {
   const q = CALC.parseQuery("студия у моря в сочи до 20 млн");
   assert.strictEqual(q.rooms, 0, "«студия» = 0 комнат");
+  const seaOnly = CALC.match(DATA, { city: "Сочи", budgetMln: 20, areaM2: 28, query: { intents: ["sea"] } });
   const res = CALC.match(DATA, { city: "Сочи", budgetMln: 20, areaM2: 28, query: q });
-  assert.strictEqual(res.cityCount, 3, "у моря в срезе Сочи три ЖК — все должны остаться");
-  assert.ok(res.all.length === 3 && res.all.every((r) => /мор|курорт|лини/i.test(r.zhk.feature)), "фильтр по морю работает");
+  assert.ok(seaOnly.all.length >= 3, "в Сочи должно быть не меньше 3 ЖК «у моря», сейчас " + seaOnly.all.length);
+  // Вычеркнуть можно только тот ЖК, где мелкого лота нет вовсе: иначе слово «студия» съедает выдачу.
+  // то же правило, что в calc.pickLotGroup: группа лотов с minAreaM2 <= запрошенного метража
+  const hasSmall = (z) => (z.lots || []).some((l) => l.minAreaM2 != null && l.minAreaM2 <= 32);
+  const expected = seaOnly.all.map((r) => r.zhk).filter(hasSmall);
+  const kept = new Set(res.all.map((r) => r.zhk.id));
+  expected.forEach((z) => assert.ok(kept.has(z.id), z.name + " вычеркнут словом «студия», хотя лот до 32 м² в данных есть"));
+  assert.strictEqual(res.cityCount, expected.length, "счётчик выдачи не совпал со списком ЖК с мелким лотом");
+  assert.ok(res.all.every((r) => /мор|курорт|лини|берег|адler/i.test(r.zhk.feature + " " + r.zhk.district)),
+    "фильтр по морю работает");
   const one = CALC.parseQuery("однушка в сочи");
   assert.strictEqual(one.rooms, 1, "«однушка» понятна как 1 комната");
 });
@@ -175,8 +198,10 @@ test("комнатные слова не вычёркивают ЖК из выд
 test("«у метро» находит ЖК, где источник пишет «м. Чкаловская»", () => {
   assert.ok(CALC.parseQuery("двушка у метро").intents.includes("metro"), "слово «метро» — интент");
   const res = CALC.match(DATA, { city: "Екатеринбург", budgetMln: 40, areaM2: 60, query: { intents: ["metro"] } });
-  assert.strictEqual(res.cityCountAll, 5, "в Екатеринбурге 5 ЖК");
-  assert.strictEqual(res.cityCount, 2, "с метро в описании — Парк Столиц и DOM 7");
+  assert.strictEqual(res.cityCountAll, CITY_N["Екатеринбург"], "в Екатеринбурге " + CITY_N["Екатеринбург"] + " ЖК");
+  const withMetro = DATA.filter((z) => z.city === "Екатеринбург" && CALC.intentHit(z, "metro")).length;
+  assert.ok(withMetro >= 2, "станцию метро в тексте карточки должны находить хотя бы у 2 ЖК, нашли " + withMetro);
+  assert.strictEqual(res.cityCount, withMetro, "фильтр «у метро» должен оставить ровно те ЖК, где метро написано");
   assert.ok(res.all.every((r) => /метро|(?:^|[\s(,])м\.\s*[а-яё]/i.test(r.zhk.district + " " + r.zhk.feature)),
     "у всех оставшихся метро действительно в тексте источника");
   const none = CALC.match(DATA, { city: "Сочи", budgetMln: 40, areaM2: 60, query: { intents: ["metro"] } });
@@ -186,12 +211,13 @@ test("«у метро» находит ЖК, где источник пишет 
 
 test("район из расширенных настроек сужает выборку честно", () => {
   const ekb = CALC.districts(DATA, "Екатеринбург");
-  assert.ok(ekb.length >= 3, "районы берутся из поля «Район»: " + ekb.join(" / "));
+  assert.ok(ekb.length >= 3, "районы берутся из поля «Район» карточки: " + ekb.join(" / "));
   const target = ekb[0];
   const res = CALC.match(DATA, { city: "Екатеринбург", budgetMln: 40, areaM2: 60, district: target, query: {} });
   const manual = DATA.filter((z) => z.city === "Екатеринбург" && z.district.toLowerCase().includes(target.toLowerCase()));
   assert.ok(res.cityCount === manual.length && res.cityCount > 0, `район «${target}»: ${res.cityCount} ЖК, в данных ${manual.length}`);
-  assert.ok(res.cityCountAll === 5 && res.cityCount < res.cityCountAll, "фильтр виден в счётчиках: было 5, стало меньше");
+  assert.ok(res.cityCountAll === CITY_N["Екатеринбург"] && res.cityCount < res.cityCountAll,
+    "фильтр виден в счётчиках: было " + CITY_N["Екатеринбург"] + ", стало меньше");
   const none = CALC.match(DATA, { city: "Екатеринбург", budgetMln: 40, areaM2: 60, district: "Академический", query: {} });
   assert.strictEqual(none.cityCount, 0, "района, которого нет в срезе, не должно быть в выдаче");
   assert.ok(/Академический/.test(none.emptyReason), "причина названа словом: " + none.emptyReason);

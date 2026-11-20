@@ -604,10 +604,10 @@ BODY = r"""
         <a href="#results">Ваши ЖК</a>
         <a href="#chart">График цен</a>
         <a href="#market" data-open="market">Все новостройки</a>
-        <a href="#catalog">Таблица 15 ЖК</a>
+        <a href="#catalog">Таблица @@N@@ ЖК</a>
       </nav>
       <div class="topbar-right">
-        <span class="stamp"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-check"/></svg> Цены сверены с источниками 15-16.11.2026</span>
+        <span class="stamp"><svg class="ic" aria-hidden="true" style="width:14px;height:14px"><use href="#i-check"/></svg> Цены сверены с источниками: срез @@ASOF@@</span>
         <button class="burger" id="burger" aria-expanded="false" aria-controls="main-nav" aria-label="Меню раздела"><svg class="ic"><use href="#i-menu"/></svg></button>
       </div>
     </div>
@@ -617,7 +617,7 @@ BODY = r"""
     <div class="hero-bg" aria-hidden="true"><div class="hero-veil"></div></div>
     <div class="hero-inner">
       <div>
-        <span class="hero-eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Бесплатно · 15 ЖК · цены сверены с источниками 15-16.11.2026</span>
+        <span class="hero-eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-scale"/></svg> Бесплатно · @@N@@ ЖК · цены сверены с источниками: срез @@ASOF@@</span>
         <h1>Новостройки: подбор по бюджету и честный список ЖК</h1>
         <p class="hero-sub">Город → бюджет в рублях → площадь. Считаем по фактическому минимальному лоту, а не «цена от × метраж».</p>
       </div>
@@ -627,7 +627,7 @@ BODY = r"""
   <div class="panel" id="panel">
     <nav class="tabs" role="tablist" aria-label="Режимы">
       <button class="tab is-on" role="tab" type="button" id="tabPick" aria-selected="true" aria-controls="results">Подбор по бюджету</button>
-      <button class="tab" role="tab" type="button" id="tabList" aria-selected="false" aria-controls="market">Все новостройки <b id="tabListCount">15</b></button>
+      <button class="tab" role="tab" type="button" id="tabList" aria-selected="false" aria-controls="market">Все новостройки <b id="tabListCount">@@NCITY@@</b></button>
       <button class="tab" role="tab" type="button" id="tabSaved" aria-selected="false" aria-controls="savedBlock">Сохранённое <b id="tabSavedCount">0</b></button>
     </nav>
 
@@ -691,7 +691,7 @@ BODY = r"""
               <button class="chip" type="button" data-klass="Бизнес" aria-pressed="false">бизнес</button>
               <button class="chip" type="button" data-klass="Премиум" aria-pressed="false">премиум</button>
             </span>
-            <p class="field-note">Класс в базе взят из поля «Класс ЖК» карточки источника — 15 из 15, не наша догадка.</p>
+            <p class="field-note">Класс в базе взят из поля «Класс ЖК» карточки источника — @@N@@ из @@N@@, не наша догадка.</p>
           </div>
           <div class="adv-row nl-in">
             <label for="queryInput"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg> Можно словами</label>
@@ -753,7 +753,7 @@ BODY = r"""
         <span class="chips citypick" role="group" aria-label="Город в списке" id="cityTabsList"></span>
         <span class="chips" role="group" aria-label="Сортировка" id="marketSort"></span>
         <span class="chips">
-          <button class="chip" type="button" id="marketAll" aria-pressed="false">Показать весь срез — 15 ЖК</button>
+          <button class="chip" type="button" id="marketAll" aria-pressed="false">Показать весь срез — @@N@@ ЖК</button>
           <button class="chip" type="button" id="listBack">К подбору по бюджету</button>
         </span>
       </div>
@@ -771,8 +771,8 @@ BODY = r"""
   <div class="block" id="chart">
     <div class="inner">
       <h3>Сколько стоит метр: разброс в трёх городах</h3>
-      <p class="lede">Те же 15 ЖК, что и в подборе (срез на 15-16.11.2026). Слева — объявленная «цена от» за м² по каждому комплексу; справа — насколько фактическая цена входа за метр (минимальный лот ÷ его площадь) выше объявленной.</p>
-      <img src="chart_prices_2026.png" alt="График: минимальная цена квадратного метра по 15 ЖК и разрыв между объявленной ценой от и фактической ценой входа" loading="lazy" />
+      <p class="lede">Те же @@N@@ ЖК, что и в подборе (срез цен @@ASOF@@). Слева — объявленная «цена от» за м² по каждому комплексу; справа — насколько фактическая цена входа за метр (минимальный лот ÷ его площадь) выше объявленной.</p>
+      <img src="chart_prices_2026.png" alt="График: минимальная цена квадратного метра по @@N@@ ЖК и разрыв между объявленной ценой от и фактической ценой входа" loading="lazy" />
     </div>
   </div>
 
@@ -785,9 +785,9 @@ BODY = r"""
 
   <div class="block" id="catalog">
     <div class="inner">
-      <h3>Полный каталог: 15 новостроек, лоты, даты цен, источники</h3>
+      <h3>Полный каталог: @@N@@ новостроек, лоты, даты цен, источники</h3>
       <p class="lede" style="margin-bottom:10px">Таблица генерируется из того же файла <code>data/zhk.json</code>, что и подбор, — разойтись в цифрах нельзя.</p>
-      <button class="chip" type="button" id="toggleTableBtn" aria-expanded="false" aria-controls="tableWrap">Показать таблицу (15 строк)</button>
+      <button class="chip" type="button" id="toggleTableBtn" aria-expanded="false" aria-controls="tableWrap">Показать таблицу (@@N@@ строк)</button>
       <div class="tbl-wrap" id="tableWrap" hidden></div>
     </div>
   </div>
@@ -814,13 +814,13 @@ BODY = r"""
     <div class="legal">
       <b>НовостройкиПро</b> — учебно-демонстрационный сервис подбора новостроек. Не является офертой, рекламой объекта долевого строительства или рекомендацией к покупке:
       решение принимается после проверки проектной декларации на <a href="https://наш.дом.рф" target="_blank" rel="noopener">наш.дом.рф</a> и договора с застройщиком.
-      Все 15 объектов продаются по 214-ФЗ (ДДУ, счета эскроу): цена «от» и состав лотов меняются вместе со стадией строительства,
+      Все @@N@@ объектов продаются по 214-ФЗ (ДДУ, счета эскроу): цена «от» и состав лотов меняются вместе со стадией строительства,
       поэтому сравнивать комплексы разной стадии («котлован» против «сдан») по цене метра напрямую некорректно — сервис показывает срок сдачи у каждого ЖК.
       Расчёт справочный и опирается на минимальные лоты в продаже на дату фиксации цены. Цены, лоты и классы:
-      <a href="https://realty.vbr.ru/" target="_blank" rel="noopener">realty.vbr.ru</a>, <a href="https://m2.ru/" target="_blank" rel="noopener">m2.ru</a> (15-16.11.2026).
+      <a href="https://realty.vbr.ru/" target="_blank" rel="noopener">realty.vbr.ru</a>, <a href="https://m2.ru/" target="_blank" rel="noopener">m2.ru</a> (@@ASOF@@).
     </div>
     <div style="text-align:right;white-space:nowrap">
-      15 ЖК · 3 города · v3 (лоты + скоринг)<br />18 тестов расчёта: <code>node tests/calc.test.js</code><br />
+      @@N@@ ЖК · @@NCITIES@@ города · v3 (лоты + скоринг)<br />20 тестов расчёта: <code>node tests/calc.test.js</code><br />
       <a href="https://github.com/Zerosniper/realty-matcher-ai" target="_blank" rel="noopener">код и датасет на GitHub</a>
     </div>
   </footer>
@@ -858,12 +858,12 @@ HEAD = """
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>НовостройкиПро — подбор новостроек под бюджет: Сочи, Москва, Екатеринбург</title>
-  <meta name="description" content="Укажите город, бюджет и площадь — сервис покажет 3 ЖК с реальными лотами: цена входа, остаток бюджета, ипотечный платёж и причина отказа. 15 новостроек, цены и лоты сверены с realty.vbr.ru и m2.ru 15-16.11.2026." />
+  <meta name="description" content="Укажите город, бюджет и площадь — сервис покажет 3 ЖК с реальными лотами: цена входа, остаток бюджета, ипотечный платёж и причина отказа. @@N@@ новостроек, цены и лоты сверены с realty.vbr.ru и m2.ru (срез @@ASOF@@)." />
   <meta name="theme-color" content="#0d1c3a" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="НовостройкиПро" />
   <meta property="og:title" content="НовостройкиПро — какие новостройки вам по бюджету" />
-  <meta property="og:description" content="Подбор по реальным лотам: цена входа, остаток бюджета, ипотечный платёж. 15 ЖК в Сочи, Москве и Екатеринбурге." />
+  <meta property="og:description" content="Подбор по реальным лотам: цена входа, остаток бюджета, ипотечный платёж. @@N@@ ЖК в Сочи, Москве и Екатеринбурге." />
   <meta property="og:image" content="https://zerosniper.github.io/realty-matcher-ai/images/sochi-polyana-pik.jpg" />
   <meta property="og:image:alt" content="ЖК «Поляна Пик», Сочи — фото фасада из карточки источника" />
   <meta property="og:site_name" content="НовостройкиПро" />
@@ -874,17 +874,42 @@ HEAD = """
 """
 
 
+def numbers_from_data():
+    """Счётчики для шаблона — из собранного датасета, а не из памяти о нём."""
+    rows = json.loads((REPO / "data" / "zhk.json").read_text(encoding="utf-8"))
+    per_city = {}
+    dates = set()
+    for r in rows:
+        per_city[r["city"]] = per_city.get(r["city"], 0) + 1
+        dates.add(str(r.get("priceAsOf") or "").split(",")[0].split()[0])
+    ds = sorted(dates, key=lambda d: [int(x) for x in (d.split(".") + [""])[:3][::-1] if x])
+    asof = ds[-1] if len(ds) == 1 else ("%s – %s" % (ds[0], ds[-1])) if ds else "—"
+    return {"N": len(rows), "NCITY": max(per_city.values()) if per_city else 0,
+            "NCITIES": len(per_city), "ASOF": asof}
+
+
+def apply_tokens(text, tokens):
+    for k, v in tokens.items():
+        text = text.replace("@@%s@@" % k, str(v))
+    left = re.findall(r"@@[A-Z]+@@", text)
+    assert not left, "в шаблоне остались неподставленные токены: %s" % set(left)
+    return text
+
+
 def build():
     imgs = materialize_images()
+    TOK = numbers_from_data()
     css = CSS
     data_js = (REPO / "app" / "data.js").read_text(encoding="utf-8")
     calc_js = (REPO / "app" / "calc.js").read_text(encoding="utf-8")
     app_js = (REPO / "app" / "app.js").read_text(encoding="utf-8")
     (REPO / "app" / "styles.css").write_text(css.strip() + "\n", encoding="utf-8")
+    head = apply_tokens(HEAD, TOK)
+    body = apply_tokens(BODY, TOK)
 
     def wrap(scripts_css, scripts_js):
-        return ("<!DOCTYPE html>\n<html lang=\"ru\">\n<head>" + HEAD +
-                "\n" + scripts_css + "\n</head>\n<body>\n" + ICONS + BODY +
+        return ("<!DOCTYPE html>\n<html lang=\"ru\">\n<head>" + head +
+                "\n" + scripts_css + "\n</head>\n<body>\n" + ICONS + body +
                 "\n" + scripts_js + "\n</body>\n</html>\n")
 
     # 1) обычный сайт: внешние файлы (кэш, LCP, вес страницы)
@@ -903,6 +928,7 @@ def build():
         inline = inline.replace('src="chart_prices_2026.png"', 'src="' + uri + '"')
     (REPO / "index-standalone.html").write_text(inline, encoding="utf-8")
 
+    print("датасет: %d строк · %d города · срез цен %s" % (TOK["N"], TOK["NCITIES"], TOK["ASOF"]))
     print(f"images: {len(imgs)} файлов, {sum(s for _, s in imgs) // 1024} КБ суммарно")
     print(f"index.html          : {(REPO / 'index.html').stat().st_size / 1024:.1f} КБ")
     print(f"app/app.js          : {(REPO / 'app' / 'app.js').stat().st_size / 1024:.1f} КБ")

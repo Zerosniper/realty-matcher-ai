@@ -12,6 +12,28 @@
   "use strict";
 
   var DATA = window.ZHK_DATA || [];
+
+  /* Числа в подписях не пишем руками: считаем из DATA — поедут данные, поедут и надписи. */
+  var N_ALL = DATA.length;
+  var N_CITY = (function () { var m = {}; DATA.forEach(function (z) { m[z.city] = (m[z.city] || 0) + 1; }); return m; })();
+  var N_CITY_MAX = Object.keys(N_CITY).reduce(function (a, c) { return Math.max(a, N_CITY[c]); }, 0);
+  var CLASS_FROM_SRC = DATA.filter(function (z) { return !!z.classSource; }).length;
+  var ASOF = (function () {
+    var d = {};
+    DATA.forEach(function (z) { var m = /^(\d{2}\.\d{2})\.(\d{4})/.exec(String(z.priceAsOf || "")); if (m) d[m[1] + "." + m[2]] = 1; });
+    var k = Object.keys(d).sort(function (a, b) {
+      return a.replace(/(\d+)\.(\d+)\.(\d+)/, "$3$2$1") - b.replace(/(\d+)\.(\d+)\.(\d+)/, "$3$2$1");
+    });
+    if (!k.length) return "дата не указана";
+    return k.length === 1 ? k[0] : k[0].split(".")[0] + "–" + k[k.length - 1];
+  })();
+  function cityMixText() {
+    return Object.keys(N_CITY).map(function (c) {
+      var l = cityList(c);
+      return c + ": " + l.filter(function (z) { return z.zhkClass === "Бизнес"; }).length + " бизнес + " +
+        l.filter(function (z) { return z.zhkClass === "Премиум"; }).length + " премиум";
+    }).join("; ");
+  }
   var C = window.ZHK_CALC;
   var $ = function (id) { return document.getElementById(id); };
   var CITY_PREP = { "Сочи": "в Сочи", "Москва": "в Москве", "Екатеринбург": "в Екатеринбурге" };
@@ -490,7 +512,7 @@
         "море, парк, метро, «сдан», отделка.";
     } else if (!res.cityCount) {
       head = "Нет данных по городу «" + V.city + "»";
-      sub = "В базе 15 ЖК: " + cities().join(", ") + ".";
+      sub = "В базе " + N_ALL + " ЖК: " + cities().join(", ") + ".";
     } else if (res.fittingCount === 0) {
       var cheap = res.cheapest ? res.cheapest.entryFloor : null;
       head = "В бюджете " + money(res.capMln) + " млн ₽ подходящих ЖК " + prep + " нет";
@@ -579,7 +601,8 @@
     var ppms = list.map(function (z) { return z.pricePerM2; });
     $("cityCountHint").textContent = list.length + " ЖК в базе";
     $("cityPriceNote").textContent = "Цены " + (CITY_PREP[state.city] || state.city) + ": от " + num(Math.min.apply(null, ppms) / 1000) +
-      " тыс. до " + num(Math.max.apply(null, ppms) / 1000) + " тыс. ₽/м² · класс у 15 из 15 ЖК взят из поля источника";
+      " тыс. до " + num(Math.max.apply(null, ppms) / 1000) + " тыс. ₽/м² · класс у " +
+      list.filter(function (z) { return !!z.classSource; }).length + " из " + list.length + " ЖК города взят из поля источника";
     var minA = Math.min.apply(null, list.map(function (z) { return z.minAreaM2 || 999; }));
     $("maxPpmHint").textContent = minA && minA < 900 ? "в базе есть лоты от " + dec(minA) + " м²" : "";
     $("budgetPctHint").textContent = "при " + state.area + " м² это " + num(res.capMln * 1e6 / state.area) + " ₽ за м²";
@@ -639,6 +662,12 @@
     }).join("");
   }
 
+  function avgBiz(city, exceptId) {
+    var v = DATA.filter(function (z) { return z.city === city && z.zhkClass === "Бизнес" && z.id !== exceptId; })
+      .map(function (z) { return z.pricePerM2; });
+    return v.length ? Math.round(v.reduce(function (a, b) { return a + b; }, 0) / v.length) : 0;
+  }
+
   function renderMethod() {
     var worst = { ratio: 0, name: "" };
     DATA.forEach(function (z) {
@@ -648,13 +677,13 @@
     });
     $("methodList").innerHTML = [
       "<b>«Цена от» за м² — не цена вашей квартиры.</b> Так агрегатор показывает метр самого дешёвого лота комплекса (обычно большого, углового или без вида). Умножать её на желаемую площадь нельзя: в маленьких лотах метр дороже. Считаем от цены метра фактического минимального лота нужной категории и показываем разброс. В худшем ЖК среза («" + esc(worst.name) + "», " + esc(worst.city) + "») реальная цена входа за метр выше объявленной на <b>" + Math.round((worst.ratio - 1) * 100) + "%</b>.",
-      "<b>Если квартиры такой площади нет — так и написано.</b> Пример из аудита: «Чистые Пруды» (Sminex, ЦАО) — минимум 115 м² за 161,11 млн ₽. Старая формула обещала «85 м² за 119 млн, хватает» и была бы неправдой. Правило закреплено тестом: <code>node tests/calc.test.js</code> (18 проверок).",
+      "<b>Если квартиры такой площади нет — так и написано.</b> Пример из аудита: «Чистые Пруды» (Sminex, ЦАО) — минимум 115 м² за 161,11 млн ₽. Старая формула обещала «85 м² за 119 млн, хватает» и была бы неправдой. Правило закреплено тестами: <code>node tests/calc.test.js</code>.",
       "<b>«Лучший» — это скоринг, а не «самый дорогой из влезших».</b> Веса: использование бюджета 40, срок сдачи 20, выбор планировок 20, цена метра в городе 20. Процент совпадения и разбор по критериям видны в каждой карточке.",
-      "<b>Класс ЖК взят из источника.</b> В карточке realty.vbr.ru / m2.ru есть поле «Класс ЖК»: у 15 из 15 объектов оно заполнено. Правило переноса: «Бизнес премиум» относим в «Премиум», «Бизнес» остаётся «Бизнесом». Совпадение с нашей разметкой — 15/15 (колонка «класс в источнике» в таблице).",
-      "<b>Выборка — срез из 5 проектов на город, а не рынок.</b> Структура одинаковая везде: 2 премиум + 3 бизнес. Среднее по 3 ЖК — иллюстрация, а не статистика.",
-      "<b>Чувствительность вывода «бизнес в Сочи дороже московского».</b> 507 718 против 447 326 ₽/м² получается только потому, что в срезе есть «Белые Ночи» (827 999 ₽/м², формально «Бизнес» в источнике). Без одной строки средний бизнес Сочи = <b>347 578 ₽/м²</b>, то есть ниже Москвы. Честная формулировка: на 5 объектах вывод не проверить.",
+      "<b>Класс ЖК взят из источника.</b> В карточке realty.vbr.ru / m2.ru есть поле «Класс ЖК»: у " + CLASS_FROM_SRC + " из " + N_ALL + " объектов оно заполнено. Правило переноса: «Бизнес премиум» относим в «Премиум», «Бизнес» остаётся «Бизнесом». Совпадение с нашей разметкой — " + CLASS_FROM_SRC + "/" + N_ALL + " (колонка «класс в источнике» в таблице).",
+      "<b>Выборка — срез по " + N_CITY_MAX + " проектов на город, а не рынок.</b> Структура среза: " + cityMixText() + ". Среднее по стольким ЖК — иллюстрация, а не статистика.",
+      "<b>Чувствительность вывода «бизнес в Сочи дороже московского».</b> " + num(avgBiz("Сочи")) + " против " + num(avgBiz("Москва")) + " ₽/м² — но в сочинском бизнесе сидит «Белые Ночи» (" + num(827999) + " ₽/м², формально «Бизнес» в источнике). Без этой одной строки средний бизнес Сочи = <b>" + num(avgBiz("Сочи", "sochi-belye-nochi")) + " ₽/м²</b>, то есть ниже Москвы. Честная формулировка: на " + N_CITY_MAX + " объектах вывод не проверить.",
       "<b>Рынок — долевое строительство по 214-ФЗ.</b> Цена «от» и наличие лотов действуют до следующей стадии продаж: у объектов в срезе срок сдачи — с 2023 по 2027 год, и сравнивать «котлован» со «сданным» по цене метра напрямую некорректно — поэтому срок сдачи показан у каждой карточки, а проектная декларация проверяется на наш.дом.рф до сделки.",
-      "<b>У каждой строки есть дата фиксации цены</b> (15.11.2026) и ссылка. Цена «от» у агрегатора живёт неделями и может относиться к уже проданному лоту.",
+      "<b>У каждой строки есть дата фиксации цены</b> (срез " + ASOF + ") и ссылка. Цена «от» у агрегатора живёт неделями и может относиться к уже проданному лоту.",
       "<b>Чего модель не учитывает:</b> этаж, вид, отделку, торг, рассрочку, скидку за 100% оплату, условия эскроу. Это не оценка рыночной стоимости квартиры, а отсечка «когда идти смотреть»."
     ].map(function (s) { return "<li>" + s + "</li>"; }).join("");
   }
@@ -685,8 +714,8 @@
         '<td data-label="Дата цены">' + esc((z.priceAsOf || "").split(",")[0]) + "</td>" +
         '<td data-label="Источник"><a class="src-link" target="_blank" rel="noopener" href="' + esc(z.sourceUrl) + '">' + esc(z.sourceName) + "</a></td></tr>";
     }).join("");
-    $("tableWrap").innerHTML = '<table><caption>Срез из 15 новостроек (Сочи, Москва, Екатеринбург, цены от ' +
-      "15.11.2026): объявленная «цена от» за м², реальная верхняя граница ₽/м², минимальный лот и минимальная площадь в продаже. " +
+    $("tableWrap").innerHTML = '<table><caption>Срез из ' + N_ALL + " новостроек (Сочи, Москва, Екатеринбург, цены среза " +
+      ASOF + "): объявленная «цена от» за м², реальная верхняя граница ₽/м², минимальный лот и минимальная площадь в продаже. " +
       "Подсветка слева — результат текущего подбора по городу «" + esc(V ? V.city : state.city) + "». " +
       '<span class="only-mobile">На телефоне скрыты три второстепенные колонки (застройщик, макс. ₽/м², число лотов) — ' +
       "они есть в CSV и на широком экране.</span></caption>" +
@@ -699,7 +728,22 @@
   /* Что рисуется — только поля источника: цены лотов, ₽/м², срок сдачи.
      «Готовность» — это НЕ данные о ходе работ: календарная шкала от заявленного срока сдачи,
      она так и подписана. Отдельных строек с этапами в карточке агрегатора нет. */
-  var ART_A = 2021, ART_B = 2028, ART_TODAY = 2026.87;   // границы шкалы и дата среза (15-16.11.2026)
+  /* Границы шкалы — по фактическим срокам сдачи в срезе (2016…2029), чтобы планка
+     «сданного» дома не прилипала к началу шкалы. Дата среза — последняя фиксация цен. */
+  var ART_A = DATA.reduce(function (a, z) { return Math.min(a, z.deliveryYearFrom || 9999); }, 9999);
+  var ART_B = DATA.reduce(function (a, z) { return Math.max(a, z.deliveryYearTo || 0); }, 0);
+  if (!(ART_B > ART_A)) { ART_A = 2021; ART_B = 2028; }
+  // маркер «дата среза» считаем из последней priceAsOf в данных, а не помним руками
+  var ART_TODAY = (function () {
+    var best = 0;
+    DATA.forEach(function (z) {
+      var m = /^(\d{1,2})\.(\d{1,2})\.(\d{4})/.exec(String(z.priceAsOf || ""));
+      if (m) best = Math.max(best, (+m[3]) * 10000 + (+m[2]) * 100 + (+m[1]));
+    });
+    if (!best) return 2026.87;
+    var y = Math.floor(best / 10000), mo = Math.floor(best / 100) % 100, d = best % 100;
+    return y + ((mo - 1) * 30.44 + (d - 1)) / 365;
+  })();
 
   function lotName(t) { return /^студ/i.test(t) ? "студ" : (String(t).charAt(0) + "к"); }
 
@@ -730,7 +774,7 @@
     var fx = function (yy) { return x0 + (Math.min(Math.max(yy, ART_A), ART_B) - ART_A) / (ART_B - ART_A) * w; };
     var a = fx(y0), b = fx(Math.min(y1, ART_TODAY)), today = fx(ART_TODAY);
     var ready = y1 <= 2026;
-    return '<text class="a-cap" x="' + x0 + '" y="' + (y - 12) + '">СРОК СДАЧИ · СРЕЗ 15.11.2026</text>' +
+    return '<text class="a-cap" x="' + x0 + '" y="' + (y - 12) + '">СРОК СДАЧИ · СРЕЗ ' + esc(ASOF.split("–").pop()) + "</text>" +
       '<line x1="' + x0 + '" y1="' + y + '" x2="' + (x0 + w) + '" y2="' + y + '" stroke="rgba(255,255,255,.16)" stroke-width="2" stroke-linecap="round"/>' +
       '<line class="a-line" x1="' + a.toFixed(1) + '" y1="' + y + '" x2="' + Math.max(b, a + 2).toFixed(1) + '" y2="' + y +
       '" stroke="' + lit + '" stroke-width="5" stroke-linecap="round" style="--len:' + (w + 4) + '"/>' +
@@ -851,8 +895,8 @@
         "</g>";
     }).join("");
     host.innerHTML =
-      "<h3>" + esc(state.city) + ": сколько стоит метр <span>15 ЖК среза · " + esc(t.mood.split(",")[0]) + "</span></h3>" +
-      '<svg viewBox="0 0 320 ' + (18 + list.length * 30) + '" aria-hidden="false" role="img" aria-label="Сравнение объявленной цены метра и фактической цены входа за метр по пяти ЖК">' + rows + "</svg>" +
+      "<h3>" + esc(state.city) + ": сколько стоит метр <span>" + list.length + " ЖК среза · " + esc(t.mood.split(",")[0]) + "</span></h3>" +
+      '<svg viewBox="0 0 320 ' + (18 + list.length * 30) + '" aria-hidden="false" role="img" aria-label="Сравнение объявленной цены метра и фактической цены входа за метр по ' + list.length + ' ЖК">' + rows + "</svg>" +
       '<div class="ha-legend"><span><i style="background:rgba(255,255,255,.28)"></i>«цена от» за м² в источнике</span>' +
       "<span><i style=\"background:" + t.lit + '"></i>фактически за метр минимального лота</span>' +
       "<span>· тыс. ₽/м²</span></div>";
@@ -873,8 +917,8 @@
     });
     host.innerHTML = html.join("");
     var note = $("districtNote");
-    if (note) note.textContent = "Районы взяты из поля «Район» карточки источника — ничего не придумано. " +
-      "Число рядом — сколько ЖК этого района попало в срез (в базе 5 на город).";
+    if (note) note.textContent = "Локация — из адресной строки карточки источника: район, мкр или улица, как написано. " +
+      "Число рядом — сколько ЖК среза так подписано (в базе по " + N_CITY_MAX + " на город).";
   }
 
   function renderIntentToggles() {
@@ -1010,16 +1054,16 @@
         "</div></article>";
     }).join("");
     var n = (V || state).city;
-    $("marketH").textContent = mktAll ? "Все новостройки среза: 15 ЖК, три города" : "Все новостройки: " + n;
-    $("marketNote").textContent = "Срез исследования — 5 ЖК на город (не весь рынок). Сортировка: " +
+    $("marketH").textContent = mktAll ? "Все новостройки среза: " + N_ALL + " ЖК, " + cities().length + " города" : "Все новостройки: " + n;
+    $("marketNote").textContent = "Срез исследования — по " + N_CITY_MAX + " ЖК на город (не весь рынок). Сортировка: " +
       (MKT_SORTS.filter(function (x) { return x[0] === mktSort; })[0] || ["", "—"])[1] +
       " · цена " + (r_asOf()) + " · метр и лоты — из карточки источника";
     $("marketAll").setAttribute("aria-pressed", String(mktAll));
-    $("marketAll").textContent = mktAll ? "Только " + n + " — 5 ЖК" : "Показать весь срез — 15 ЖК";
+    $("marketAll").textContent = mktAll ? "Только " + n + " — " + (N_CITY[n] || 0) + " ЖК" : "Показать весь срез — " + N_ALL + " ЖК";
     syncTabs();
   }
 
-  function r_asOf() { return "15-16.11.2026"; }
+  function r_asOf() { return ASOF; }
 
   function showMarket() { renderMarket(); setPane("list"); revealPane("market"); }
 
@@ -1396,7 +1440,7 @@
       var show = $("tableWrap").hidden;
       $("tableWrap").hidden = !show;
       $("toggleTableBtn").setAttribute("aria-expanded", String(show));
-      $("toggleTableBtn").textContent = show ? "Скрыть таблицу" : "Показать таблицу (15 строк)";
+      $("toggleTableBtn").textContent = show ? "Скрыть таблицу" : "Показать таблицу (" + N_ALL + " строк)";
       renderTable();
     });
     $("compareBtn").addEventListener("click", function () {

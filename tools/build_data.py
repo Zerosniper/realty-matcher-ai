@@ -5,10 +5,11 @@ v3 data pipeline — ЕДИНЫЙ ИСТОЧНИК ИСТИНЫ.
 
 Вход:  zhk_lots.json + zhk_groups.json (снято скриптом extract_zhk.py / extract_groups.py
        со страниц realty.vbr.ru 16.11.2026) + ручная карточка ЖК «Клевер парк» (m2.ru)
+       + zhk_dataset_new.json — добор ещё 15 ЖК (harvest.py → build_new_rows.py, 19.11.2026)
 Выход: realty-matcher-ai/data/zhk.json      — источник истины
        realty-matcher-ai/app/data.js         — то же, для <script> (работает по file://)
-       realty-matcher-ai/zhk_dataset_15.csv  — для Google Sheets / отчёта
-       realty-matcher-ai/zhk_dataset_15.xlsx — лист «Данные» + лист «Лоты»
+       realty-matcher-ai/zhk_dataset_NN.csv  — для Google Sheets / отчёта (NN = число строк)
+       realty-matcher-ai/zhk_dataset_NN.xlsx — лист «Данные» + лист «Лоты»
        realty-matcher-ai/data/checks.json    — самопроверка данных (для README/отчёта)
 """
 import json, re, csv, pathlib
@@ -135,13 +136,38 @@ def build():
             "sourceTitle": d.get("h1"),
         })
 
+    # ---- добор: карточки, снятые с тех же источников тем же способом (harvest.py) ----
+    have = {r["id"] for r in rows}
+    try:
+        extra = json.loads(_raw("zhk_dataset_new.json").read_text(encoding="utf-8"))
+    except SystemExit:
+        extra = []
+    for r in extra:
+        if r["id"] in have:
+            continue
+        empty = [k for k in ("city", "name", "developer", "district", "zhkClass", "classSource", "pricePerM2",
+                             "pricePerM2Max", "minLotMln", "maxLotMln", "minAreaM2", "offers", "delivery",
+                             "deliveryYearFrom", "deliveryYearTo", "lots", "feature", "sourceName", "sourceUrl",
+                             "priceAsOf", "sourceTitle") if r.get(k) in (None, "", [])]
+        assert not empty, "строка %s: на карточке не нашлось полей %s — строка не добавлена" % (r["id"], empty)
+        assert r["city"] in ("Сочи", "Москва", "Екатеринбург"), "чужой город у %s" % r["id"]
+        assert r["zhkClass"] in ("Бизнес", "Премиум"), "класс %r у %s" % (r["zhkClass"], r["id"])
+        assert CLASS_MAP.get(str(r["classSource"]).strip(), "Бизнес") == r["zhkClass"], "класс != источник у %s" % r["id"]
+        rows.append(r)
+
     order = {c: i for i, c in enumerate(["Сочи", "Москва", "Екатеринбург"])}
     rows.sort(key=lambda r: (order[r["city"]], r["pricePerM2"]))
     for i, r in enumerate(rows, 1):
         r["n"] = i
 
-    # ---- самопроверка: 15 строк, класс из источника, мин. лот / мин. площадь = фактическая цена входа за м²
-    checks = {"rows": len(rows), "cities": {c: sum(1 for r in rows if r["city"] == c) for c in order},
+    # ---- самопроверка: N строк, класс из источника, мин. лот / мин. площадь = фактическая цена входа за м²
+    N = len(rows)
+    checks = {"rows": N, "cities": {c: sum(1 for r in rows if r["city"] == c) for c in order},
+              "classMix": {c: {k: sum(1 for r in rows if r["city"] == c and r["zhkClass"] == k)
+                               for k in ("Бизнес", "Премиум")} for c in order},
+              "asOfDates": sorted({str(r["priceAsOf"])[:10] for r in rows}),
+              "bySource": {so: sum(1 for r in rows if r["sourceName"] == so)
+                           for so in sorted({r["sourceName"] for r in rows})},
               "classFromSource": sum(1 for r in rows if r["classSource"]),
               "classMatchesSource": sum(1 for r in rows if r["classSource"] and CLASS_MAP.get(r["classSource"].strip(), "?") == r["zhkClass"]),
               "withMinLotPrice": sum(1 for r in rows if r["minLotMln"]),
@@ -154,6 +180,13 @@ def build():
             r["minLotImpliedPpm"] = round(implied)
             worst = max(worst, implied / r["pricePerM2"] - 1)
     checks["maxImpliedPpm"] = round(worst, 3)
+    over5 = [r for r in rows if r.get("minLotImpliedPpm") and r["minLotImpliedPpm"] > r["pricePerM2"] * 1.05]
+    checks["impliedAbove5pct"] = len(over5)
+    wr = max((r for r in rows if r.get("minLotImpliedPpm")),
+             key=lambda r: r["minLotImpliedPpm"] / r["pricePerM2"], default=None)
+    checks["worstImplied"] = {"name": wr["name"], "city": wr["city"],
+                              "declared": wr["pricePerM2"], "actual": wr["minLotImpliedPpm"],
+                              "pct": round((wr["minLotImpliedPpm"] / wr["pricePerM2"] - 1) * 100)} if wr else None
     checks["cityPrice"] = {}
     for c in order:
         ppms = sorted(r["pricePerM2"] for r in rows if r["city"] == c)
@@ -164,6 +197,17 @@ def build():
     checks["premiumAvg"] = {c: round(sum(v) / len(v)) for c, v in prem.items() if v}
     sochi_biz_ex = [r["pricePerM2"] for r in rows if r["city"] == "Сочи" and r["zhkClass"] == "Бизнес" and r["id"] != "sochi-belye-nochi"]
     checks["sochiBusinessAvg_exBelyeNoci"] = round(sum(sochi_biz_ex) / len(sochi_biz_ex))
+    checks["rowsText"] = "%d строк(и) · %s" % (N, " · ".join("%s: %d" % (c, checks["cities"][c]) for c in order))
+    # переключатели «у метро / у парка / у моря / школа»: считаем по тем же полям карточки
+    rx = {"sea": r"мор[еяе]|берег|набережн|примор|перв\w* лин|курорт|адлер",
+          "park": r"парк|лес|зелен|зелён", "school": r"школ|детск\w* сад",
+          "metro": r"метро|м\.\s*[а-яё]|станц", "done": r"сдан"}
+    # поле «что важно рядом» в интерфейсе ищется по textOf() = район + особенность + застройщик
+    # + название + срок сдачи; самопроверка обязана считать по тому же тексту, иначе цифры
+    # в checks.json и счётчики на галочках разойдутся (так и было: park 7 против 8)
+    text_keys = ("district", "feature", "developer", "name", "delivery")
+    checks["intentHits"] = {k: sum(1 for r in rows if re.search(
+        v, " ".join(str(r.get(t) or "") for t in text_keys), re.I)) for k, v in rx.items()}
 
     (REPO / "data").mkdir(parents=True, exist_ok=True)
     (REPO / "data" / "zhk.json").write_text(json.dumps(rows, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -172,11 +216,13 @@ def build():
     (REPO / "app" / "data.js").write_text(
         "// Сгенерировано из data/zhk.json скриптом tools/build_data.py — вручную не править.\n"
         "window.ZHK_DATA = " + json.dumps(rows, ensure_ascii=False) + ";\n"
-        "window.ZHK_META = " + json.dumps({"builtAt": "2026-11-16", "priceAsOf": "15-16.11.2026",
+        "window.ZHK_META = " + json.dumps({"builtAt": "2026-11-19", "rows": N, "priceAsOf": "15-19.11.2026",
+                                           "priceAsOfRange": "15.11.2026 – 19.11.2026",
                                            "sources": ["realty.vbr.ru", "m2.ru"]}, ensure_ascii=False) + ";\n",
         encoding="utf-8")
 
-    with (REPO / "zhk_dataset_15.csv").open("w", newline="", encoding="utf-8-sig") as f:
+    dataset = "zhk_dataset_%d" % N
+    with (REPO / (dataset + ".csv")).open("w", newline="", encoding="utf-8-sig") as f:
         w = csv.writer(f, delimiter=";")
         w.writerow(["№", "Город", "ЖК", "Застройщик", "Район / локация", "Класс (источник)", "Класс (наш)",
                     "Цена от, ₽/м²", "Цена до, ₽/м²", "Средняя ₽/м²", "Мин. лот, млн ₽", "Макс. лот, млн ₽",
@@ -190,7 +236,7 @@ def build():
     try:
         from openpyxl import Workbook
         from openpyxl.styles import Font, PatternFill, Alignment
-        wb = Workbook(); ws = wb.active; ws.title = "Данные 15 ЖК"
+        wb = Workbook(); ws = wb.active; ws.title = "Данные %d ЖК" % N
         hdr = ["№", "Город", "ЖК", "Застройщик", "Район", "Класс (источник)", "Класс (наш)", "от ₽/м²", "до ₽/м²",
                "средняя ₽/м²", "мин. лот, млн ₽", "макс. лот, млн ₽", "мин. площадь, м²", "лотов", "срок сдачи",
                "дата фиксации", "источник", "ссылка"]
@@ -214,11 +260,15 @@ def build():
             for col, wdt in zip("ABCDEFGHIJKLMNOPQR", [5, 13, 30, 20, 34, 16, 12, 12, 12, 13, 14, 14, 12, 8, 22, 18, 14, 40]):
                 sh.column_dimensions[col].width = wdt
             sh.freeze_panes = "A2"
-        wb.save(REPO / "zhk_dataset_15.xlsx")
+        wb.save(REPO / (dataset + ".xlsx"))
         print("xlsx: ok")
     except Exception as e:
         print("xlsx skipped:", repr(e)[:80])
 
+    for old in list(REPO.glob("zhk_dataset_*.csv")) + list(REPO.glob("zhk_dataset_*.xlsx")):
+        if old.name != dataset + ".csv" and old.name != dataset + ".xlsx":
+            old.unlink()
+            print("удалён устаревший:", old.name)
     print(json.dumps(checks, ensure_ascii=False, indent=1))
     return rows
 

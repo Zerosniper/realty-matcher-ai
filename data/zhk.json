@@ -53,6 +53,59 @@
     "minLotImpliedPpm": 330698
   },
   {
+    "id": "sochi-lestoriya",
+    "city": "Сочи",
+    "name": "ЖК «Лестория»",
+    "developer": "Девелоперская компания «Неометрия»",
+    "district": "улица Искры",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 343342.0,
+    "pricePerM2Max": 646661.0,
+    "pricePerM2Avg": 465660.0,
+    "minLotMln": 10.24,
+    "maxLotMln": 35.75,
+    "minAreaM2": 20.3,
+    "offers": 263,
+    "delivery": "Сдача в 2026, есть сданные",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 20.3,
+        "fromMln": 10.24,
+        "toMln": 17.05
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 21.6,
+        "fromMln": 11.38,
+        "toMln": 24.9
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 41.9,
+        "fromMln": 18.67,
+        "toMln": 35.75
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 66.6,
+        "fromMln": 25.47,
+        "toMln": 32.4
+      }
+    ],
+    "feature": "этажность от 15 до 17, корпусов 6, дом монолитно-кирпичный, отделка: без отделки, чистовая, на территории: детские площадки, спортивные площадки, места для отдыха, бассейн",
+    "imgKey": "sochi-lestoriya",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/lestoriya/",
+    "priceAsOf": "19.11.2026, 01:06",
+    "sourceTitle": "ЖК «Лестория» от застройщика Девелоперская компания «Неометрия» в Сочи — купить квартиру в новостройке от 10,24 млн ₽",
+    "n": 2,
+    "minLotImpliedPpm": 504433
+  },
+  {
     "id": "sochi-svetsky-les",
     "city": "Сочи",
     "name": "ЖК «Светский лес»",
@@ -102,8 +155,143 @@
     "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/svetskii-les/",
     "priceAsOf": "15.11.2026, 01:38",
     "sourceTitle": "ЖК «Светский лес» от застройщика ГК ТОЧНО в Сочи — купить квартиру в новостройке от 15,34 млн ₽",
-    "n": 2,
+    "n": 3,
     "minLotImpliedPpm": 582384
+  },
+  {
+    "id": "sochi-fazotron",
+    "city": "Сочи",
+    "name": "ЖК «Фазотрон»",
+    "developer": "ГК Альпика",
+    "district": "Мамайка мкр, улица Волжская, 22",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 400000.0,
+    "pricePerM2Max": 470000.0,
+    "pricePerM2Avg": 196761.0,
+    "minLotMln": 12.04,
+    "maxLotMln": 39.2,
+    "minAreaM2": 29.2,
+    "offers": 18,
+    "delivery": "Сдача в 2024, сдан",
+    "deliveryYearFrom": 2024,
+    "deliveryYearTo": 2024,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 29.2,
+        "fromMln": 12.04,
+        "toMln": 14.9
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 32.8,
+        "fromMln": 13.12,
+        "toMln": 14.42
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 58.1,
+        "fromMln": 23.82,
+        "toMln": 25.56
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 94.0,
+        "fromMln": 37.6,
+        "toMln": 39.2
+      }
+    ],
+    "feature": "этажность 11, корпусов 6, дом монолитный, отделка: без отделки, чистовая, на территории: детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "sochi-fazotron",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/fazotron/",
+    "priceAsOf": "19.11.2026, 01:24",
+    "sourceTitle": "ЖК «Фазотрон» от застройщика ГК Альпика в Сочи — купить квартиру в новостройке от 12,04 млн ₽",
+    "n": 4,
+    "minLotImpliedPpm": 412329
+  },
+  {
+    "id": "sochi-mone",
+    "city": "Сочи",
+    "name": "ЖК «МОНЕ»",
+    "developer": "Nedvex",
+    "district": "Адлер жилрайон, Курортный Городок мкр",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 436893.0,
+    "pricePerM2Max": 896551.0,
+    "pricePerM2Avg": 756412.0,
+    "minLotMln": 9.0,
+    "maxLotMln": 32.0,
+    "minAreaM2": 20.0,
+    "offers": 22,
+    "delivery": "Сдача в 2022, сдан",
+    "deliveryYearFrom": 2022,
+    "deliveryYearTo": 2022,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 20.0,
+        "fromMln": 9.0,
+        "toMln": 32.0
+      }
+    ],
+    "feature": "этажность 8, корпусов 2, дом монолитный, отделка: чистовая, на территории: детские площадки, спортивные площадки, места для отдыха, рестораны",
+    "imgKey": "sochi-mone",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/mone/",
+    "priceAsOf": "19.11.2026, 01:26",
+    "sourceTitle": "ЖК «МОНЕ» от застройщика Nedvex в Сочи — купить квартиру в новостройке от 9 млн ₽",
+    "n": 5,
+    "minLotImpliedPpm": 450000
+  },
+  {
+    "id": "sochi-atrium-avenue-atriym-avenu",
+    "city": "Сочи",
+    "name": "ЖК «Atrium Avenue (Атриум Авеню)»",
+    "developer": "Nedvex",
+    "district": "улица Яна Фабрициуса, 33",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 482002.0,
+    "pricePerM2Max": 573633.0,
+    "pricePerM2Avg": 403741.0,
+    "minLotMln": 11.36,
+    "maxLotMln": 25.06,
+    "minAreaM2": 19.8,
+    "offers": 6,
+    "delivery": "Сдача в 2024, сдан",
+    "deliveryYearFrom": 2024,
+    "deliveryYearTo": 2024,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 19.8,
+        "fromMln": 11.36,
+        "toMln": 14.79
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 32.4,
+        "fromMln": 16.79,
+        "toMln": 18.01
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 52.0,
+        "fromMln": 25.06,
+        "toMln": 25.06
+      }
+    ],
+    "feature": "этажность 8, корпусов 1, дом монолитно-кирпичный, отделка: без отделки, на территории: места для отдыха",
+    "imgKey": "sochi-atrium-avenue-atriym-avenu",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/atrium-avenue--atriym-avenu-/",
+    "priceAsOf": "19.11.2026, 01:33",
+    "sourceTitle": "ЖК «Atrium Avenue (Атриум Авеню)» от застройщика Nedvex в Сочи — купить квартиру в новостройке от 11,36 млн ₽",
+    "n": 6,
+    "minLotImpliedPpm": 573737
   },
   {
     "id": "sochi-neskuchny-sad",
@@ -161,7 +349,7 @@
     "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/gostinicnii-kompleks-neskycnii-sad/",
     "priceAsOf": "15.11.2026, 01:32",
     "sourceTitle": "ЖК «Гостиничный комплекс «Нескучный сад» от застройщика Девелоперская компания «Неометрия» в Сочи — купить квартиру в новостройке от 26,24 млн ₽",
-    "n": 3,
+    "n": 7,
     "minLotImpliedPpm": 1181982
   },
   {
@@ -214,7 +402,7 @@
     "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/belie-noci-6/",
     "priceAsOf": "15.11.2026, 01:17",
     "sourceTitle": "ЖК «Белые Ночи» от застройщика PARADE Development в Сочи — купить квартиру в новостройке от 28,37 млн ₽",
-    "n": 4,
+    "n": 8,
     "minLotImpliedPpm": 978951
   },
   {
@@ -273,8 +461,114 @@
     "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/polyana-pik/",
     "priceAsOf": "15.11.2026, 01:32",
     "sourceTitle": "ЖК «Поляна Пик» от застройщика PARADE Development в Сочи — купить квартиру в новостройке от 54,63 млн ₽",
-    "n": 5,
+    "n": 9,
     "minLotImpliedPpm": 1238776
+  },
+  {
+    "id": "sochi-volna-residences-volna-rezidens",
+    "city": "Сочи",
+    "name": "ЖК «Volna Residences (Волна Резиденс)»",
+    "developer": "Nedvex",
+    "district": "улица Ленина",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 1371065.0,
+    "pricePerM2Max": 2139252.0,
+    "pricePerM2Avg": 1529839.0,
+    "minLotMln": 38.5,
+    "maxLotMln": 278.45,
+    "minAreaM2": 27.31,
+    "offers": 38,
+    "delivery": "Сдача в 2028, строится",
+    "deliveryYearFrom": 2028,
+    "deliveryYearTo": 2028,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 27.31,
+        "fromMln": 50.2,
+        "toMln": 67.1
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 27.31,
+        "fromMln": 38.5,
+        "toMln": 93.25
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 54.32,
+        "fromMln": 90.65,
+        "toMln": 145.15
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 67.69,
+        "fromMln": 98.95,
+        "toMln": 278.45
+      }
+    ],
+    "feature": "этажность 4, корпусов 3, дом монолитно-кирпичный, на территории: бассейн",
+    "imgKey": "sochi-volna-residences-volna-rezidens",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/sochi/novostroyki/zhk/volna-residences--volna-rezidens-/",
+    "priceAsOf": "19.11.2026, 01:13",
+    "sourceTitle": "ЖК «Volna Residences (Волна Резиденс)» от застройщика Nedvex в Сочи — купить квартиру в новостройке от 38,5 млн ₽",
+    "n": 10,
+    "minLotImpliedPpm": 1409740
+  },
+  {
+    "id": "msk-novaya-zvezda-1",
+    "city": "Москва",
+    "name": "ЖК «Новая Звезда»",
+    "developer": "Концерн КРОСТ",
+    "district": "пос. Коммунарка, улица Бачуринская (м. Прокшино, 5 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 282000.0,
+    "pricePerM2Max": 477000.0,
+    "pricePerM2Avg": 250000.0,
+    "minLotMln": 10.62,
+    "maxLotMln": 28.03,
+    "minAreaM2": 22.6,
+    "offers": 92,
+    "delivery": "Сдача в 2017 - 2027, строится",
+    "deliveryYearFrom": 2017,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 22.6,
+        "fromMln": 10.62,
+        "toMln": 18.1
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 39.3,
+        "fromMln": 16.42,
+        "toMln": 23.01
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 44.2,
+        "fromMln": 17.15,
+        "toMln": 23.29
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 64.0,
+        "fromMln": 18.11,
+        "toMln": 28.03
+      }
+    ],
+    "feature": "этажность от 11 до 24, корпусов 4, дом монолитный, отделка: без отделки, чистовая, на территории: школа, детский сад, детские площадки, места для отдыха",
+    "imgKey": "msk-novaya-zvezda-1",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/novaya-zvezda-1/",
+    "priceAsOf": "19.11.2026, 01:09",
+    "sourceTitle": "ЖК «Новая Звезда» от застройщика Концерн КРОСТ в Москве — купить квартиру в новостройке от 10,62 млн ₽",
+    "n": 11,
+    "minLotImpliedPpm": 469912
   },
   {
     "id": "msk-admiral",
@@ -332,7 +626,7 @@
     "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/admiral-21/",
     "priceAsOf": "15.11.2026, 01:01",
     "sourceTitle": "ЖК «Адмирал» от застройщика Галс-Девелопмент в Москве — купить квартиру в новостройке от 18,01 млн ₽",
-    "n": 6,
+    "n": 12,
     "minLotImpliedPpm": 625347
   },
   {
@@ -385,8 +679,61 @@
     "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/crystal-trilogiya--kristall-trilogiya-/",
     "priceAsOf": "15.11.2026, 01:31",
     "sourceTitle": "ЖК «Трилогия CRYSTAL (Трилогия Кристалл)» от застройщика Концерн КРОСТ в Москве — купить квартиру в новостройке от 21,21 млн ₽",
-    "n": 7,
+    "n": 13,
     "minLotImpliedPpm": 625664
+  },
+  {
+    "id": "msk-seliger-siti",
+    "city": "Москва",
+    "name": "ЖК «Селигер Сити»",
+    "developer": "MR",
+    "district": "Ильменский проезд (м. Селигерская, 1 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 457412.0,
+    "pricePerM2Max": 655036.0,
+    "pricePerM2Avg": 698575.0,
+    "minLotMln": 18.87,
+    "maxLotMln": 40.44,
+    "minAreaM2": 28.8,
+    "offers": 19,
+    "delivery": "Сдача в 2020 - 2026, есть сданные",
+    "deliveryYearFrom": 2020,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 28.8,
+        "fromMln": 18.87,
+        "toMln": 21.48
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 39.4,
+        "fromMln": 23.57,
+        "toMln": 28.84
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 63.8,
+        "fromMln": 32.9,
+        "toMln": 34.82
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 88.4,
+        "fromMln": 40.44,
+        "toMln": 40.44
+      }
+    ],
+    "feature": "этажность от 7 до 45, корпусов 2, дом монолитно-кирпичный, монолитный, отделка: без отделки, чистовая, на территории: детский сад, детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "msk-seliger-siti",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/seliger-siti/",
+    "priceAsOf": "19.11.2026, 01:12",
+    "sourceTitle": "ЖК «Селигер Сити» от застройщика MR в Москве — купить квартиру в новостройке от 18,87 млн ₽",
+    "n": 14,
+    "minLotImpliedPpm": 655208
   },
   {
     "id": "msk-plekhanova-11",
@@ -438,8 +785,191 @@
     "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/plehanova-11/",
     "priceAsOf": "15.11.2026, 01:30",
     "sourceTitle": "ЖК «Плеханова 11» от застройщика ПИК в Москве — купить квартиру в новостройке от 17,55 млн ₽",
-    "n": 8,
+    "n": 15,
     "minLotImpliedPpm": 780000
+  },
+  {
+    "id": "msk-zilart",
+    "city": "Москва",
+    "name": "ЖК «ЗИЛАРТ»",
+    "developer": "ЛСР",
+    "district": "улица Архитектора Щусева (м. Автозаводская, 3 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 522590.0,
+    "pricePerM2Max": 997944.0,
+    "pricePerM2Avg": 670923.0,
+    "minLotMln": 17.57,
+    "maxLotMln": 103.69,
+    "minAreaM2": 17.8,
+    "offers": 117,
+    "delivery": "Сдача в 2018 - 2027, строится",
+    "deliveryYearFrom": 2018,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 17.8,
+        "fromMln": 17.57,
+        "toMln": 23.32
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 32.8,
+        "fromMln": 20.99,
+        "toMln": 35.05
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 49.6,
+        "fromMln": 27.14,
+        "toMln": 35.64
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 87.8,
+        "fromMln": 70.34,
+        "toMln": 70.34
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 110.4,
+        "fromMln": 78.75,
+        "toMln": 103.69
+      }
+    ],
+    "feature": "этажность от 3 до 43, корпусов 3, дом монолитно-кирпичный, монолитный, отделка: без отделки, чистовая, на территории: школа, детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "msk-zilart",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/zilart/",
+    "priceAsOf": "19.11.2026, 01:02",
+    "sourceTitle": "ЖК «ЗИЛАРТ» от застройщика ЛСР в Москве — купить квартиру в новостройке от 17,57 млн ₽",
+    "n": 16,
+    "minLotImpliedPpm": 987079
+  },
+  {
+    "id": "msk-beregovoi",
+    "city": "Москва",
+    "name": "ЖК «Береговой-2»",
+    "developer": "Главстрой",
+    "district": "Береговой проезд (м. Шелепиха, 7 мин транспортом)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 593211.0,
+    "pricePerM2Max": 1304837.0,
+    "pricePerM2Avg": 775250.0,
+    "minLotMln": 30.35,
+    "maxLotMln": 280.54,
+    "minAreaM2": 40.0,
+    "offers": 26,
+    "delivery": "Сдача в 2025 - 2029, строится",
+    "deliveryYearFrom": 2025,
+    "deliveryYearTo": 2029,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 40.0,
+        "fromMln": 30.35,
+        "toMln": 40.5
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 64.0,
+        "fromMln": 42.96,
+        "toMln": 64.07
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 119.0,
+        "fromMln": 82.33,
+        "toMln": 280.54
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 145.0,
+        "fromMln": 122.48,
+        "toMln": 267.8
+      },
+      {
+        "type": "5-комнатные",
+        "minAreaM2": 172.0,
+        "fromMln": 190.74,
+        "toMln": 266.63
+      }
+    ],
+    "feature": "этажность от 7 до 26, корпусов 1, дом монолитно-кирпичный, отделка: без отделки, на территории: школа, детский сад, поликлиника, детские площадки",
+    "imgKey": "msk-beregovoi",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/beregovoi/",
+    "priceAsOf": "19.11.2026, 01:17",
+    "sourceTitle": "ЖК «Береговой-2» от застройщика Главстрой в Москве — купить квартиру в новостройке от 30,35 млн ₽",
+    "n": 17,
+    "minLotImpliedPpm": 758750
+  },
+  {
+    "id": "msk-slava-slava",
+    "city": "Москва",
+    "name": "ЖК «Slava (Слава)»",
+    "developer": "MR",
+    "district": "Ленинградский проспект, вл8 (м. Белорусская, 1 мин транспортом)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 719370.0,
+    "pricePerM2Max": 1710360.0,
+    "pricePerM2Avg": 1068904.0,
+    "minLotMln": 26.69,
+    "maxLotMln": 249.03,
+    "minAreaM2": 28.1,
+    "offers": 44,
+    "delivery": "Сдача в 2023 - 2027, строится",
+    "deliveryYearFrom": 2023,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 28.1,
+        "fromMln": 26.69,
+        "toMln": 68.96
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 38.1,
+        "fromMln": 39.59,
+        "toMln": 57.85
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 62.0,
+        "fromMln": 57.99,
+        "toMln": 79.93
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 86.7,
+        "fromMln": 89.28,
+        "toMln": 100.31
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 125.2,
+        "fromMln": 99.96,
+        "toMln": 249.03
+      },
+      {
+        "type": "5-комнатные",
+        "minAreaM2": 201.0,
+        "fromMln": 144.59,
+        "toMln": 144.59
+      }
+    ],
+    "feature": "этажность от 8 до 37, корпусов 4, дом монолитный, отделка: без отделки, чистовая, на территории: детский сад, детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "msk-slava-slava",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/slava--slava-/",
+    "priceAsOf": "19.11.2026, 01:31",
+    "sourceTitle": "ЖК «Slava (Слава)» от застройщика MR в Москве — купить квартиру в новостройке от 26,69 млн ₽",
+    "n": 18,
+    "minLotImpliedPpm": 949822
   },
   {
     "id": "msk-chistye-prudy",
@@ -497,7 +1027,7 @@
     "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/cistie-prydi-1/",
     "priceAsOf": "15.11.2026, 01:32",
     "sourceTitle": "ЖК «Исторический дом «Чистые Пруды» от застройщика Sminex в Москве — купить квартиру в новостройке от 161,11 млн ₽",
-    "n": 9,
+    "n": 19,
     "minLotImpliedPpm": 1400957
   },
   {
@@ -532,8 +1062,67 @@
     "sourceUrl": "https://realty.vbr.ru/moskva/novostroyki/zhk/clos-17--klo-17-/",
     "priceAsOf": "15.11.2026, 01:38",
     "sourceTitle": "ЖК «Clos 17 (Кло 17)» от застройщика MR в Москве — купить квартиру в новостройке от 227,54 млн ₽",
-    "n": 10,
+    "n": 20,
     "minLotImpliedPpm": 2749940
+  },
+  {
+    "id": "ekb-k100-na-kosmonavtov-100",
+    "city": "Екатеринбург",
+    "name": "ЖК «К100 на Космонавтов, 100»",
+    "developer": "Компания Практика",
+    "district": "проспект Космонавтов, 100 (м. Проспект Космонавтов, 2 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 157744.0,
+    "pricePerM2Max": 230670.0,
+    "pricePerM2Avg": 185364.0,
+    "minLotMln": 5.76,
+    "maxLotMln": 17.69,
+    "minAreaM2": 30.91,
+    "offers": 72,
+    "delivery": "Сдача в 2026 - 2028, строится",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2028,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 30.91,
+        "fromMln": 5.76,
+        "toMln": 7.23
+      },
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 31.73,
+        "fromMln": 5.99,
+        "toMln": 9.87
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 51.1,
+        "fromMln": 9.86,
+        "toMln": 14.96
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 67.6,
+        "fromMln": 12.4,
+        "toMln": 15.25
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 100.1,
+        "fromMln": 17.55,
+        "toMln": 17.69
+      }
+    ],
+    "feature": "этажность 30, корпусов 3, дом монолитно-кирпичный, на территории: детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "ekb-k100-na-kosmonavtov-100",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/k100-na-kosmonavtov--100/",
+    "priceAsOf": "19.11.2026, 01:00",
+    "sourceTitle": "ЖК «К100 на Космонавтов, 100» от застройщика Компания Практика в Екатеринбурге — купить квартиру в новостройке от 5,76 млн ₽",
+    "n": 21,
+    "minLotImpliedPpm": 186347
   },
   {
     "id": "ekb-park-stolic",
@@ -579,8 +1168,61 @@
     "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/park-stolic/",
     "priceAsOf": "15.11.2026, 01:14",
     "sourceTitle": "ЖК «Парк Столиц» от застройщика Атлас Девелопмент в Екатеринбурге — купить квартиру в новостройке от 10,49 млн ₽",
-    "n": 11,
+    "n": 22,
     "minLotImpliedPpm": 240596
+  },
+  {
+    "id": "ekb-revolution-towers-revolusn-tayers",
+    "city": "Екатеринбург",
+    "name": "ЖК «Revolution Towers (Революшн Тауэрс)»",
+    "developer": "АТОМСТРОЙКОМПЛЕКС",
+    "district": "улица Маршала Жукова (м. Уральская, 3 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 203211.0,
+    "pricePerM2Max": 391594.0,
+    "pricePerM2Avg": 263696.0,
+    "minLotMln": 14.05,
+    "maxLotMln": 36.7,
+    "minAreaM2": 50.32,
+    "offers": 68,
+    "delivery": "Сдача в 2027, строится",
+    "deliveryYearFrom": 2027,
+    "deliveryYearTo": 2027,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 52.87,
+        "fromMln": 16.1,
+        "toMln": 36.7
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 50.32,
+        "fromMln": 14.05,
+        "toMln": 27.35
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 87.75,
+        "fromMln": 18.92,
+        "toMln": 29.7
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 104.41,
+        "fromMln": 21.95,
+        "toMln": 32.0
+      }
+    ],
+    "feature": "этажность от 27 до 28, корпусов 2, дом монолитно-кирпичный, отделка: чистовая, на территории: детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "ekb-revolution-towers-revolusn-tayers",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/revolution-towers--revolusn-tayers-/",
+    "priceAsOf": "19.11.2026, 01:33",
+    "sourceTitle": "ЖК «Revolution Towers (Революшн Тауэрс)» от застройщика АТОМСТРОЙКОМПЛЕКС в Екатеринбурге — купить квартиру в новостройке от 14,05 млн ₽",
+    "n": 23,
+    "minLotImpliedPpm": 279213
   },
   {
     "id": "ekb-nagorny",
@@ -632,7 +1274,7 @@
     "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/nagornii-1/",
     "priceAsOf": "15.11.2026, 01:31",
     "sourceTitle": "ЖК «Нагорный» от застройщика УГМК-Застройщик в Екатеринбурге — купить квартиру в новостройке от 14,3 млн ₽",
-    "n": 12,
+    "n": 24,
     "minLotImpliedPpm": 270321
   },
   {
@@ -685,8 +1327,43 @@
     "sourceUrl": "https://m2.ru/yekaterinburg/novostroyki/zhk-klever-park-3216/",
     "priceAsOf": "16.11.2026",
     "sourceTitle": "ЖК «Клевер парк» (m2.ru)",
-    "n": 13,
+    "n": 25,
     "minLotImpliedPpm": 312057
+  },
+  {
+    "id": "ekb-lyvr",
+    "city": "Екатеринбург",
+    "name": "ЖК «Лувр»",
+    "developer": "СЗ Нижнеисетский пруд",
+    "district": "Парковый мкр, Лувр ЖК (м. Динамо, 9 мин транспортом)",
+    "zhkClass": "Бизнес",
+    "classSource": "Бизнес",
+    "pricePerM2": 235515.0,
+    "pricePerM2Max": 310810.0,
+    "pricePerM2Avg": 221819.0,
+    "minLotMln": 6.15,
+    "maxLotMln": 10.5,
+    "minAreaM2": 22.1,
+    "offers": 9,
+    "delivery": "Сдача в 2026, есть сданные",
+    "deliveryYearFrom": 2026,
+    "deliveryYearTo": 2026,
+    "lots": [
+      {
+        "type": "Студии",
+        "minAreaM2": 22.1,
+        "fromMln": 6.15,
+        "toMln": 10.5
+      }
+    ],
+    "feature": "этажность от 22 до 25, корпусов 1, дом монолитно-кирпичный, на территории: детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "ekb-lyvr",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/lyvr/",
+    "priceAsOf": "19.11.2026, 01:38",
+    "sourceTitle": "ЖК «Лувр» от застройщика СЗ Нижнеисетский пруд в Екатеринбурге — купить квартиру в новостройке от 6,15 млн ₽",
+    "n": 26,
+    "minLotImpliedPpm": 278281
   },
   {
     "id": "ekb-dom-7",
@@ -744,8 +1421,96 @@
     "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/dom-7--dom-7-/",
     "priceAsOf": "15.11.2026, 01:02",
     "sourceTitle": "ЖК «DOM 7 (Дом 7)» от застройщика Компания Практика в Екатеринбурге — купить квартиру в новостройке от 13,09 млн ₽",
-    "n": 14,
+    "n": 27,
     "minLotImpliedPpm": 363006
+  },
+  {
+    "id": "ekb-lenina-8",
+    "city": "Екатеринбург",
+    "name": "ЖК «Ленина 8»",
+    "developer": "Prinzip",
+    "district": "Центральный жилрайон, клубный дом Ленина 8 (м. Площадь 1905 года, 1 мин транспортом)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 340000.0,
+    "pricePerM2Max": 400000.0,
+    "pricePerM2Avg": 320000.0,
+    "minLotMln": 38.45,
+    "maxLotMln": 46.2,
+    "minAreaM2": 111.6,
+    "offers": 3,
+    "delivery": "Сдача в 2022 - 2023, сдан",
+    "deliveryYearFrom": 2022,
+    "deliveryYearTo": 2023,
+    "lots": [
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 111.6,
+        "fromMln": 38.45,
+        "toMln": 46.2
+      }
+    ],
+    "feature": "этажность от 7 до 28, корпусов 2, дом монолитно-кирпичный, монолитный, отделка: без отделки, на территории: детский сад, детские площадки, спортивные площадки, места для отдыха",
+    "imgKey": "ekb-lenina-8",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/lenina-8/",
+    "priceAsOf": "19.11.2026, 01:25",
+    "sourceTitle": "ЖК «Ленина 8» от застройщика Prinzip в Екатеринбурге — купить квартиру в новостройке от 38,45 млн ₽",
+    "n": 28,
+    "minLotImpliedPpm": 344534
+  },
+  {
+    "id": "ekb-basnya-iset",
+    "city": "Екатеринбург",
+    "name": "ЖК «Башня «Исеть»",
+    "developer": "УГМК-Застройщик",
+    "district": "улица Бориса Ельцина, 6 (м. Геологическая, 2 мин транспортом)",
+    "zhkClass": "Премиум",
+    "classSource": "Бизнес премиум",
+    "pricePerM2": 354621.0,
+    "pricePerM2Max": 429060.0,
+    "pricePerM2Avg": 425545.0,
+    "minLotMln": 31.02,
+    "maxLotMln": 94.78,
+    "minAreaM2": 72.9,
+    "offers": 10,
+    "delivery": "Сдача в 2016, сдан",
+    "deliveryYearFrom": 2016,
+    "deliveryYearTo": 2016,
+    "lots": [
+      {
+        "type": "1-комнатные",
+        "minAreaM2": 72.9,
+        "fromMln": 31.02,
+        "toMln": 31.53
+      },
+      {
+        "type": "2-комнатные",
+        "minAreaM2": 79.3,
+        "fromMln": 33.35,
+        "toMln": 45.65
+      },
+      {
+        "type": "3-комнатные",
+        "minAreaM2": 129.8,
+        "fromMln": 54.91,
+        "toMln": 62.44
+      },
+      {
+        "type": "4-комнатные",
+        "minAreaM2": 226.2,
+        "fromMln": 94.78,
+        "toMln": 94.78
+      }
+    ],
+    "feature": "этажность 52, корпусов 1, дом кирпичный, на территории: детские площадки, места для отдыха, супермаркет, рестораны",
+    "imgKey": "ekb-basnya-iset",
+    "sourceName": "realty.vbr.ru",
+    "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/basnya-iset/",
+    "priceAsOf": "19.11.2026, 01:24",
+    "sourceTitle": "ЖК «Башня «Исеть»» от застройщика УГМК-Застройщик в Екатеринбурге — купить квартиру в новостройке от 31,02 млн ₽",
+    "n": 29,
+    "minLotImpliedPpm": 425514
   },
   {
     "id": "ekb-literaturny",
@@ -797,7 +1562,7 @@
     "sourceUrl": "https://realty.vbr.ru/ekaterinburg/novostroyki/zhk/po-yl-pervomaiskaya-1/",
     "priceAsOf": "15.11.2026, 01:37",
     "sourceTitle": "ЖК «Клубный дом Литературный» от застройщика Север (Тюмень) в Екатеринбурге — купить квартиру в новостройке от 25,07 млн ₽",
-    "n": 15,
+    "n": 30,
     "minLotImpliedPpm": 601199
   }
 ]

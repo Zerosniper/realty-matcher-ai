@@ -1,0 +1,422 @@
+{
+ "sochi-lestoriya": {
+  "asOf": "19.11.2026, 01:06",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 20.3,
+    "fromMln": 10.24,
+    "toMln": 17.05
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 21.6,
+    "fromMln": 11.38,
+    "toMln": 24.9
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 41.9,
+    "fromMln": 18.67,
+    "toMln": 35.75
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 66.6,
+    "fromMln": 25.47,
+    "toMln": 32.4
+   }
+  ],
+  "offers": 263
+ },
+ "sochi-fazotron": {
+  "asOf": "19.11.2026, 01:24",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 29.2,
+    "fromMln": 12.04,
+    "toMln": 14.9
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 32.8,
+    "fromMln": 13.12,
+    "toMln": 14.42
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 58.1,
+    "fromMln": 23.82,
+    "toMln": 25.56
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 94.0,
+    "fromMln": 37.6,
+    "toMln": 39.2
+   }
+  ],
+  "offers": 18
+ },
+ "sochi-mone": {
+  "asOf": "19.11.2026, 01:26",
+  "groups": [
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 20.0,
+    "fromMln": 9.0,
+    "toMln": 32.0
+   }
+  ],
+  "offers": 22
+ },
+ "sochi-volna-residences-volna-rezidens": {
+  "asOf": "19.11.2026, 01:13",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 27.31,
+    "fromMln": 50.2,
+    "toMln": 67.1
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 27.31,
+    "fromMln": 38.5,
+    "toMln": 93.25
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 54.32,
+    "fromMln": 90.65,
+    "toMln": 145.15
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 67.69,
+    "fromMln": 98.95,
+    "toMln": 278.45
+   }
+  ],
+  "offers": 38
+ },
+ "msk-zilart": {
+  "asOf": "19.11.2026, 01:02",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 17.8,
+    "fromMln": 17.57,
+    "toMln": 23.32
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 32.8,
+    "fromMln": 20.99,
+    "toMln": 35.05
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 49.6,
+    "fromMln": 27.14,
+    "toMln": 35.64
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 87.8,
+    "fromMln": 70.34,
+    "toMln": 70.34
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 110.4,
+    "fromMln": 78.75,
+    "toMln": 103.69
+   }
+  ],
+  "offers": 117
+ },
+ "msk-seliger-siti": {
+  "asOf": "19.11.2026, 01:12",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 28.8,
+    "fromMln": 18.87,
+    "toMln": 21.48
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 39.4,
+    "fromMln": 23.57,
+    "toMln": 28.84
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 63.8,
+    "fromMln": 32.9,
+    "toMln": 34.82
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 88.4,
+    "fromMln": 40.44,
+    "toMln": 40.44
+   }
+  ],
+  "offers": 19
+ },
+ "msk-novaya-zvezda-1": {
+  "asOf": "19.11.2026, 01:09",
+  "groups": [
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 22.6,
+    "fromMln": 10.62,
+    "toMln": 18.1
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 39.3,
+    "fromMln": 16.42,
+    "toMln": 23.01
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 44.2,
+    "fromMln": 17.15,
+    "toMln": 23.29
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 64.0,
+    "fromMln": 18.11,
+    "toMln": 28.03
+   }
+  ],
+  "offers": 92
+ },
+ "msk-beregovoi": {
+  "asOf": "19.11.2026, 01:17",
+  "groups": [
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 40.0,
+    "fromMln": 30.35,
+    "toMln": 40.5
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 64.0,
+    "fromMln": 42.96,
+    "toMln": 64.07
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 119.0,
+    "fromMln": 82.33,
+    "toMln": 280.54
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 145.0,
+    "fromMln": 122.48,
+    "toMln": 267.8
+   },
+   {
+    "type": "5-комнатные",
+    "minAreaM2": 172.0,
+    "fromMln": 190.74,
+    "toMln": 266.63
+   }
+  ],
+  "offers": 26
+ },
+ "msk-slava-slava": {
+  "asOf": "19.11.2026, 01:31",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 28.1,
+    "fromMln": 26.69,
+    "toMln": 68.96
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 38.1,
+    "fromMln": 39.59,
+    "toMln": 57.85
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 62.0,
+    "fromMln": 57.99,
+    "toMln": 79.93
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 86.7,
+    "fromMln": 89.28,
+    "toMln": 100.31
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 125.2,
+    "fromMln": 99.96,
+    "toMln": 249.03
+   },
+   {
+    "type": "5-комнатные",
+    "minAreaM2": 201.0,
+    "fromMln": 144.59,
+    "toMln": 144.59
+   }
+  ],
+  "offers": 44
+ },
+ "ekb-revolution-towers-revolusn-tayers": {
+  "asOf": "19.11.2026, 01:33",
+  "groups": [
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 52.87,
+    "fromMln": 16.1,
+    "toMln": 36.7
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 50.32,
+    "fromMln": 14.05,
+    "toMln": 27.35
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 87.75,
+    "fromMln": 18.92,
+    "toMln": 29.7
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 104.41,
+    "fromMln": 21.95,
+    "toMln": 32.0
+   }
+  ],
+  "offers": 68
+ },
+ "ekb-lyvr": {
+  "asOf": "19.11.2026, 01:38",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 22.1,
+    "fromMln": 6.15,
+    "toMln": 10.5
+   }
+  ],
+  "offers": 9
+ },
+ "ekb-k100-na-kosmonavtov-100": {
+  "asOf": "19.11.2026, 01:00",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 30.91,
+    "fromMln": 5.76,
+    "toMln": 7.23
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 31.73,
+    "fromMln": 5.99,
+    "toMln": 9.87
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 51.1,
+    "fromMln": 9.86,
+    "toMln": 14.96
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 67.6,
+    "fromMln": 12.4,
+    "toMln": 15.25
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 100.1,
+    "fromMln": 17.55,
+    "toMln": 17.69
+   }
+  ],
+  "offers": 72
+ },
+ "ekb-basnya-iset": {
+  "asOf": "19.11.2026, 01:24",
+  "groups": [
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 72.9,
+    "fromMln": 31.02,
+    "toMln": 31.53
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 79.3,
+    "fromMln": 33.35,
+    "toMln": 45.65
+   },
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 129.8,
+    "fromMln": 54.91,
+    "toMln": 62.44
+   },
+   {
+    "type": "4-комнатные",
+    "minAreaM2": 226.2,
+    "fromMln": 94.78,
+    "toMln": 94.78
+   }
+  ],
+  "offers": 10
+ },
+ "ekb-lenina-8": {
+  "asOf": "19.11.2026, 01:25",
+  "groups": [
+   {
+    "type": "3-комнатные",
+    "minAreaM2": 111.6,
+    "fromMln": 38.45,
+    "toMln": 46.2
+   }
+  ],
+  "offers": 3
+ },
+ "sochi-atrium-avenue-atriym-avenu": {
+  "asOf": "19.11.2026, 01:33",
+  "groups": [
+   {
+    "type": "Студии",
+    "minAreaM2": 19.8,
+    "fromMln": 11.36,
+    "toMln": 14.79
+   },
+   {
+    "type": "1-комнатные",
+    "minAreaM2": 32.4,
+    "fromMln": 16.79,
+    "toMln": 18.01
+   },
+   {
+    "type": "2-комнатные",
+    "minAreaM2": 52.0,
+    "fromMln": 25.06,
+    "toMln": 25.06
+   }
+  ],
+  "offers": 6
+ }
+}

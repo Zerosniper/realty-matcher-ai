@@ -30,8 +30,31 @@ def avg(rows):
     return sum(r for r in rows) / len(rows) if rows else 0
 
 
+def snapshot():
+    """Диапазон дат фиксации цен и разбивка по источникам — из самого датасета."""
+    dates = sorted({str(z.get("priceAsOf") or "").split(",")[0].strip() for z in DATA if z.get("priceAsOf")},
+                   key=lambda d: [int(x) for x in (d.split(".") + ["0"])[:3][::-1]])
+    src = {}
+    for z in DATA:
+        src[z["sourceName"]] = src.get(z["sourceName"], 0) + 1
+    srcs = " + ".join("%s (%d ЖК)" % (k, v) for k, v in sorted(src.items(), key=lambda kv: -kv[1]))
+    one = dates[0] if len(dates) == 1 else "%s – %s" % (dates[0], dates[-1])
+    return one, srcs, dates
+
+
 def main():
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(15.5, 7.6), gridspec_kw={"width_ratios": [1, 1.25]})
+    asof, sources_line, _dates = snapshot()
+    N = len(DATA)
+    per_city = {c: sum(1 for z in DATA if z["city"] == c) for c in CITIES}
+    mix = "бизнес / премиум: %d / %d" % (sum(1 for z in DATA if z["zhkClass"] == "Бизнес"),
+                                          sum(1 for z in DATA if z["zhkClass"] == "Премиум"))
+    tests = 0
+    tp = HERE / "tests" / "calc.test.js"
+    if tp.exists():
+        tests = tp.read_text(encoding="utf-8").count("\ntest(")
+    tests_note = " (%d проверок)" % tests if tests else ""
+    fig, (a1, a2) = plt.subplots(1, 2, figsize=(15.5, max(7.6, 0.245 * N + 4.4)),
+                                 gridspec_kw={"width_ratios": [1, 1.25]})
     fig.patch.set_facecolor("white")
 
     # ---------------- панель A: средние по классам
@@ -50,7 +73,8 @@ def main():
                         ha="center", va="bottom", fontsize=9.5, color="#101d31", weight="bold")
     a1.set_xticks(list(x)); a1.set_xticklabels(CITIES, fontsize=11)
     a1.set_ylabel("тыс. ₽ за м²", fontsize=10.5)
-    a1.set_title("A. Средняя объявленная «цена от» за м² по классам\n(срез 5 ЖК на город, 2 премиум + 3 бизнес)",
+    a1.set_title("A. Средняя объявленная «цена от» за м² по классам\n(срез %d ЖК: по %d на город, %s)"
+                 % (N, max(per_city.values()), mix),
                  fontsize=12.5, weight="bold", color="#101d31", loc="left")
     a1.set_ylim(0, max(max(biz), max(prm)) * 1.30)
     a1.legend(frameon=False, fontsize=9.5, loc="upper center", bbox_to_anchor=(0.5, -0.075), ncol=2)
@@ -58,7 +82,7 @@ def main():
     for sp in ("top", "right"):
         a1.spines[sp].set_visible(False)
     a1.annotate(
-        "Пунктир = Сочи-бизнес БЕЗ одной строки\n(«Белые Ночи», 828 тыс. ₽/м²):\n"
+        "Пунктир = Сочи-бизнес БЕЗ одной строки\n(«Белые Ночи», 828 тыс. ₽/м², в источнике «Бизнес»):\n"
         f"{avg([z['pricePerM2'] for z in DATA if z['city']=='Сочи' and z['zhkClass']=='Бизнес'])/1000:.0f} → {sochi_ex:.0f} тыс. ₽/м²,\n"
         "т.е. НИЖЕ Москвы. Вывод о «дорогом\nСочи» держится на одном объекте —\nэто гипотеза, а не закономерность.",
         xy=(1 - w / 2, sochi_ex), xytext=(0.02, 0.46), textcoords="axes fraction", fontsize=8.6, color="#8a2233",
@@ -81,7 +105,7 @@ def main():
     for i, d, r, g in zip(y, decl, real, gaps):
         a2.text(max(d, r) + 22, i, f"{r:,.0f} vs {d:,.0f}  (+{g*100:.0f}%)" if g > 0.01 else f"{r:,.0f} ≈ {d:,.0f}",
                 va="center", fontsize=8.7, color="#c02b40" if g > 0.25 else "#5b6880")
-    a2.set_yticks(list(y)); a2.set_yticklabels(labels, fontsize=9.2)
+    a2.set_yticks(list(y)); a2.set_yticklabels(labels, fontsize=9.2 if N <= 18 else 8.4)
     a2.set_xlabel("тыс. ₽ за м²", fontsize=10.5)
     a2.set_xlim(0, max(max(decl), max(real)) * 1.42)
     a2.set_title("B. Почему «цена от × площадь» занижает стоимость\nВо скольких ЖК реальная цена входа за метр выше объявленной",
@@ -94,12 +118,12 @@ def main():
 
     n_over = sum(1 for g in gaps if g > 0.05)
     fig.text(0.008, 0.015,
-             f"Источники: realty.vbr.ru (14 ЖК) и m2.ru (1 ЖК), цены зафиксированы 15-16.11.2026. Класс — поле «Класс ЖК» карточки источника. "
+             f"Источники: {sources_line}; цены зафиксированы {asof}. Класс — поле «Класс ЖК» карточки источника. "
              f"В {n_over} из {len(rows)} ЖК фактическая цена входа за м² выше объявленной «от» более чем на 5%: у агрегатора «цена от» относится к одному (обычно худшему) лоту, "
-             f"а не к квартире любого метража. Расчёт подборщика: python3 -m http.server + tests/calc.test.js (15 проверок).",
+             f"а не к квартире любого метража. Расчёт подборщика: tests/calc.test.js{tests_note}",
              fontsize=8.2, color="#5b6880")
     a2.tick_params(axis="x", pad=2)
-    fig.suptitle("Рынок новостроек бизнес- и премиум-класса: Москва, Сочи, Екатеринбург — данные 15-16 ноября 2026",
+    fig.suptitle("Рынок новостроек бизнес- и премиум-класса: Москва, Сочи, Екатеринбург — срез цен %s" % asof,
                  fontsize=14.5, weight="bold", color="#101d31", y=0.975)
     fig.tight_layout(rect=(0, 0.035, 1, 0.95))
     out = HERE / "chart_prices_2026.png"
